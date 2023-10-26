@@ -123,9 +123,9 @@ export default {
     },
     filteredMessages() {
       if (this.search) {
-        return this.filterMessagesBySearch(this.search.toLowerCase()); // Converter o termo de pesquisa para minúsculas
+        return this.filterMessagesBySearch(this.search.toLowerCase()); 
       } else {
-        return this.filterMessagesByProfileName(this.profileName.toLowerCase()); // Converter o nome do perfil para minúsculas
+        return this.filterMessagesByProfileName(this.profileName.toLowerCase()); 
       }
     },
   },

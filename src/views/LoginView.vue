@@ -3,9 +3,9 @@
      <div class="login">
        <h1 class="title">LOGIN</h1>
        <h3 class="label">Email:</h3>
-       <input type="text" placeholder="Digite seu email" class="input-field">
+       <input v-model="user.email"  type="text" placeholder="Digite seu email" class="input-field">
        <h3 class="label">Senha:</h3>
-       <input type="password" placeholder="Digite sua senha" class="input-field">
+       <input  v-model="user.password" type="password" placeholder="Digite sua senha" class="input-field">
        <div class="botoes">
          <v-btn @click="logar"><p>Logar</p></v-btn>
          <v-btn @click="cadastro"><p>Cadastro</p></v-btn>
@@ -36,7 +36,7 @@
 }
 
 .title {
-  text-align: center; /* Centralize o título horizontalmente */
+  text-align: center; 
   margin: 0;
   margin-bottom: 0.5rem;
   color: white;
@@ -74,22 +74,28 @@ p {
   gap: 0.8rem;
   margin-top: 1.2rem;
   align-items: center;
-  justify-content: center; /* Centralize horizontalmente */
-}
+  justify-content: center; }
 
 body {
   margin: 0;
   font-family: Arial, sans-serif;
 }
 </style>
+import {ref} from 'Vue';
+import {useStore} from 'Vuex'
 
 <script>
 import router from '../router/index';
 
 export default {
+ data(){
+return{
+user: {},
+}
+ },
   methods: {
     logar() {
-      router.push({ name: 'home' });
+     this.$store.dispatch("login", this.user);
     },
     cadastro() {
       router.push({ name: 'cadastro' });

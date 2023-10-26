@@ -1,15 +1,15 @@
 <template>
   <div id="app">
-    <nav v-if="$route.path!=='/' && this.$route.path !== '/cadastro'">
-      <router-link to="/home">Home</router-link> |
+    <nav v-if="$route.path!=='/login' && this.$route.path !== '/cadastro'">
+      <router-link to="/">Home</router-link> |
       <router-link to="/perfil/Maria%20Luiza/@Malu10/0">Perfil</router-link> |
       <router-link to="/usuarios">Usuários</router-link>
+      <v-btn @click="sair"> sair </v-btn>
+
     </nav>
     <router-view />
   </div>
 </template>
-
-
 
 
 <style lang="scss">
@@ -36,6 +36,21 @@ nav {
   }
 }
 </style>
+
+<script> 
+export default {
+  beforeCreate() {
+    this.$store.dispatch("fetchUser");
+  },
+  methods: {
+    sair() {
+      this.$store.dispatch("logout");
+    }
+  }
+}
+</script>
+>
+
 
 
 

@@ -9,7 +9,7 @@
     <v-card-text style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: black; font-size: 0.9rem; margin-left: 5px; margin-top: -1.4rem;">
       {{ message.text }}
     </v-card-text>
-    <v-img v-if="message.image" :src="message.image" max-width="100%" max-height="auto"></v-img>
+    <v-img v-if="message.image" :src="message.image" max-width="100%" max-height="auto" style="display: flex; align-items: center;"></v-img>
     <v-row style="display: flex; flex-direction: row; gap:10px; justify-content: right; margin-right: 20px; margin-left: 10px; padding-bottom: 20px;">
       <v-btn @click="openDialog()" style="width: 10%; height: 90%;" v-if="message.id === postId">Editar</v-btn>
       <v-btn @click="deleteMessages(message.id)" style="width: 10%; height: 90%;">Excluir</v-btn>

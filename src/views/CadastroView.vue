@@ -7,7 +7,7 @@
           <div class="form-column">
             <div class="form-group">
               <label for="nome">Nome:</label>
-              <input type="text" id="nome" placeholder="Digite seu nome" class="input-field">
+              <input  type="text" id="nome" placeholder="Digite seu nome" class="input-field">
             </div>
             <div class="form-group">
               <label for="usuario">Usuário:</label>
@@ -15,13 +15,13 @@
             </div>
             <div class="form-group">
               <label for="email">Email:</label>
-              <input type="text" id="email" placeholder="Digite seu email" class="input-field">
+              <input v-model="user.email" type="text" id="email" placeholder="Digite seu email" class="input-field">
             </div>
           </div>
           <div class="form-column">
             <div class="form-group">
               <label for="senha">Senha:</label>
-              <input type="password" id="senha" placeholder="Digite sua senha" class="input-field">
+              <input  v-model="user.senha" type="password" id="senha" placeholder="Digite sua senha" class="input-field">
             </div>
             <div class="form-group">
               <label for="repetirSenha">Repetir Senha:</label>
@@ -33,7 +33,7 @@
             </div>
           </div>
         </div>
-        <button class="save-button">Salvar</button>
+        <button @click="cadastrar" class="save-button">Salvar</button>
       </div>
     </div>
   </template>
@@ -79,15 +79,15 @@
   
   .form-container {
     display: flex;
-    justify-content: center; /* Centraliza horizontalmente */
-    align-items: center; /* Centraliza verticalmente */
+    justify-content: center;
+    align-items: center; 
   }
   
   .form-column {
     display: flex;
     flex-direction: column;
-    gap: 1.0rem; /* Espaço vertical entre os campos */
-    margin-right: 1.6rem; /* Espaço horizontal entre as colunas */
+    gap: 1.0rem; 
+    margin-right: 1.6rem; 
     margin-left: 0.6rem;
     width: 50%;
   }
@@ -148,10 +148,19 @@
   import router from '../router/index';
   
   export default {
+    data(){
+     return{
+      user : {}
+     }
+    },
     methods: {
       voltar() {
         router.push({ name: 'login' });
       },
+      cadastrar() {
+   
+    this.$store.dispatch("register", this.user);
+    },
     },
   };
   </script>
