@@ -21,28 +21,36 @@ mutations:{
   }
 },
 actions:{
-  async login({commit}, details){
-    const {email, password} = details;
+  async login({ commit }, details) {
+    const { email, password } = details;
+  
     try {
       await signInWithEmailAndPassword(auth, email, password);
-    }
-    catch (error) {
-      console.log(error.code);
-      return; } 
-      commit("SET_USER", auth.currentUser);
-      router.push("/");
-}, 
-  async register ( details){
-    const {email, password} = details;
-    try{
-      await createUserWithEmailAndPassword(auth, email, password);
-      console.log("cadastro realizado com sucesso");
     } catch (error) {
-      console.log(error.message);
-      
+      console.log(error.code);
       return;
     }
-  },
+  
+    commit("SET_USER", auth.currentUser);
+  }, 
+
+async register({ commit }, details) {
+  const { email, password } = details;
+
+  try {
+    
+    await createUserWithEmailAndPassword(auth, email, password);
+
+   
+    commit('SET_USER', auth.currentUser);
+
+    
+    console.log('User account created successfully!');
+  } catch (error) {
+  
+    console.log(error.message);
+  }
+},
   async logout ({commit}){
   await signOut(auth);
 

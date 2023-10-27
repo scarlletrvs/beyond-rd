@@ -21,7 +21,7 @@
           <div class="form-column">
             <div class="form-group">
               <label for="senha">Senha:</label>
-              <input  v-model="user.senha" type="password" id="senha" placeholder="Digite sua senha" class="input-field">
+              <input  v-model="user.password" type="password" id="senha" placeholder="Digite sua senha" class="input-field">
             </div>
             <div class="form-group">
               <label for="repetirSenha">Repetir Senha:</label>
