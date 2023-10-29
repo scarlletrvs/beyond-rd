@@ -1,18 +1,19 @@
 <template>
   <v-app>
-    <BarraPesquisa @search-posts="performSearch" />
+    <BarraPesquisa @search-posts="performSearch" :search="search" :profileUser="userUser" />
     <h1 style="color: black; font-size: 20px; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; margin: 0.8rem; align-items: center; display: flex;">
       Usuários
     </h1>
     <div class="user-list">
       <div v-for="user in displayedUsers" :key="user.id" class="user-item">
-        <router-link :to="'/perfil/' + user.name + '/' + user.user + '/' + user.id" style="color: black;">
-          <v-icon style=" margin-left: 0.4rem; margin-right: 0.3rem;">mdi-account</v-icon>{{ user.name }}
+        <router-link :to="'/perfil/' + user.name + '/' + user.user " style="color: rgb(247, 246, 246);">
+          <v-icon style=" margin-left: 0.4rem; margin-right: 0.3rem;" class="white--text">mdi-account</v-icon> {{ user.name }}
         </router-link>
       </div>
     </div>
   </v-app>
 </template>
+
 
 <style>
 .user-list {
@@ -23,7 +24,7 @@
 }
 
 .user-item {
-  background-color: pink;
+  background-color: rgb(148, 20 ,114);
   list-style-type: none; 
   margin-bottom: 0.5rem;
 }
@@ -69,6 +70,16 @@ export default {
     };
   },
   computed: {
+    userDisplayName() {
+      const name = localStorage.getItem('nome');
+      return name || localStorage.getItem('email');
+    },
+    userDisplayUserLocal() {
+      const user = localStorage.getItem('userlocal');
+      return user || localStorage.getItem('email')
+;
+    },
+
     uniqueUsers() {
       const uniqueNames = new Map();
       for (const user of this.users) {
@@ -92,6 +103,35 @@ export default {
     performSearch(term) {
       this.search = term;
     },
+
+    
+    updateUserList() {
+      const name = localStorage.getItem('nome');
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+     
+
+      // Adicione o novo usuário à lista
+      this.users.push({
+  id: this.users.length,
+  name: name || (email ? email.slice(0, email.indexOf('@')) : ''),
+  user: user || (email ? '@' + email.slice(0, email.indexOf('@')) : ''),
+  privado: false,
+});
+
+    },
+  },props:{
+
+    message: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
   },
-};
+  mounted() {
+    this.updateUserList();
+  },};
 </script>

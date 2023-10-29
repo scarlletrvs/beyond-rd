@@ -1,6 +1,6 @@
 <template>
-  <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; background-color: rgb(148, 20, 114); padding: 10px;">
-    <p style="font-size: 1.2rem; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif; font-weight: bold; margin: 0;">
+  <div style="display: flex; justify-content: space-around; align-items: center; width: 100%; background-color: rgb(148, 20, 114); padding: 10px; margin-top: 0.1rem;">
+    <p style="font-size: 1.2rem;font-family: Avenir, Helvetica, Arial, sans-serif; font-weight: 300; margin: 0; text-decoration: none;">
       Rede Social
     </p>
     <v-btn @click="deleteAllMessages" class="delete-button">
@@ -17,6 +17,7 @@
   text-align: center;
   font-size: 0.8rem;
   padding: 0;
+  
 }
 </style>
 
@@ -33,5 +34,13 @@ export default {
       this.$emit('deleteAllMessages');
     },
   },
+  message: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
 };
 </script>

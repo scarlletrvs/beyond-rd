@@ -1,16 +1,29 @@
 <template>
+ 
   <div id="app">
+    <div class="custom-alert" v-if="showAlert">
+      <div class="custom-alert-content">
+        {{ alertMessage }}
+        <button class="custom-alert-button" @click="closeAlert">OK</button>
+      </div>
+    </div>
+  
     <nav v-if="$route.path!=='/login' && this.$route.path !== '/cadastro'">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/perfil/Maria%20Luiza/@Malu10/0">Perfil</router-link> |
-      <router-link to="/usuarios">Usuários</router-link>
-      <v-btn @click="sair"> sair </v-btn>
+      <div class="nav-content">
+        <div class="nav-links">
+          <router-link to="/">Home</router-link> |
+          <router-link :to="'/perfil/' + user.nome + '/' + user.user">Perfil</router-link> |
+          <router-link to="/usuarios">Usuários</router-link>
+        </div>
+        <div class="div-btn-sair">
+          <v-btn class="logout-button" @click="sair">Sair</v-btn>
 
+        </div>
+      </div>
     </nav>
     <router-view />
   </div>
 </template>
-
 
 <style lang="scss">
 #app {
@@ -18,43 +31,158 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #05080b;
+  
 }
 
 nav {
-  margin-bottom: 0.2%;
   padding: 20px;
   background-color: rgb(148, 20, 114);
   text-align: center;
+}
 
+.nav-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-links {
   a {
     font-weight: bold;
-    color: #2c3e50;
-
-    &.router-link-exact-active {
-      color: #ffffff;
-    }
+    color: #0b1724;
+    text-decoration: none;
+    margin-right: 15px; /* Espaçamento entre links */
   }
+  .router-link-exact-active {
+    color: #ffffff;
+  }
+}
+
+.logout-button {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+
+.router-view {
+  position: relative; /* Garante que o conteúdo principal não seja coberto pelo alerta */
+  z-index: 1; /* Defina um valor de z-index menor para o conteúdo principal */
+}
+
+.custom-alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(255, 255, 255, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.custom-alert-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.custom-alert-button {
+  background-color: pink;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 </style>
 
-<script> 
+
+<script>
+
 export default {
+ 
+  data() {
+    return {
+      showAlert: false,
+      alertMessage: '',
+    
+users: [
+        {
+          id: 0,
+          name: 'Maria Luiza',
+          user: '@Malu10',
+          privado: false,
+        },
+        {
+          id: 1,
+          name: 'Vitor Gabriel',
+          user: '@vt10',
+          privado: false,
+        },
+        {
+          id: 2,
+          name: 'Pedro Lins',
+          user: '@pedro200',
+          privado: true,
+        },
+        {
+          id: 5,
+          name: 'Sergio Henrique',
+          user: '@sh22',
+          privado: false,
+        },
+      ],
+    };
+  },
   beforeCreate() {
     this.$store.dispatch("fetchUser");
   },
+  created() {
+  // Busque os dados do perfil com base nos parâmetros da rota
+  this.profileName = this.$route.params.userName;
+  this.profileUser = this.$route.params.userNick;
+  this.profileImage = this.getUserProfileImage(this.profileUser);
+},
+  computed: {
+    user() {
+      const nome = localStorage.getItem('nome');
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      if (!nome && !user) {
+        return { nome: email.slice(0, email.indexOf('@')), user: ('@' + email.slice(0, email.indexOf('@'))) };
+      } else {
+        return { nome, user };
+      }
+    },
+  },
   methods: {
     sair() {
-      this.$store.dispatch("logout");
-    }
-  }
-}
+      this.$store.dispatch("logout").then(() => {
+        localStorage.clear();
+        this.openAlert('Você foi desconectado com sucesso!');
+      });
+    },
+    openAlert(message) {
+      this.alertMessage = message;
+      this.showAlert = true;
+    },
+    closeAlert() {
+      this.showAlert = false;
+    },
+  },
+  props: {
+    message: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
+    },
+   
+  },};
 </script>
->
-
-
-
-
-
-
-
-

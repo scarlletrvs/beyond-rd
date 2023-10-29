@@ -10,7 +10,7 @@
             {{ profileName }}
           </h1>
         </div>
-        <div style="width: 94%;">
+        <div style="width: 94%; height: 100%;">
           <PostNew :profileName="profileName" :profile-user="profileUser" @sendMessages="sendMessages" />
         </div>
       </div>
@@ -41,33 +41,44 @@ export default {
   name: 'APP',
   data() {
     return {
-    
       textInput: '',
       imageInput: null,
       editingImage: null,
       search: '',
       profileName: this.$route.params.userName,
       profileUser: this.$route.params.userNick,
-      users: [
+      profileImage: '',
+      profileUndefined: 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png',      users: [
         {
           id: 0,
           name: 'Maria Luiza',
           user: '@Malu10',
           privado: false,
+          userProfileImage: 'https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg',
         },
         {
           id: 1,
           name: 'Vitor',
           user: '@vt10',
           privado: false,
+          userProfileImage: 'https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-um-capacete-branco-e-oculos_625492-10145.jpg',
+          
         },
         {
           id: 2,
           name: 'Pedro',
           user: '@pedro200',
           privado: true,
+          userProfileImage:'https://i.pinimg.com/474x/fb/ec/7f/fbec7fd8ed507cae788b0c8e310a32df.jpg',
         },
-        // Adicione outros usuários aqui
+        {
+          id: 5,
+          name: 'Sergio Henrique',
+          user: '@sh22',
+          privado: false,
+          userProfileImage: 'https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg',
+        },
+       
       ],
       messages: [
         {
@@ -76,6 +87,7 @@ export default {
           user: '@Malu10',
           text: 'oi bom dia!',
           image: null,
+          
         },
         {
           id: 1,
@@ -83,6 +95,7 @@ export default {
           user: '@vt10',
           text: 'sem bom dia!',
           image: null,
+        
         },
         {
           id: 2,
@@ -90,6 +103,7 @@ export default {
           user: '@pedro200',
           text: 'bom dia!',
           image: null,
+          
         },
         {
           id: 3,
@@ -97,6 +111,7 @@ export default {
           user: '@Malu10',
           text: 'oi gente!',
           image: null,
+      
         },
         {
           id: 4,
@@ -104,6 +119,7 @@ export default {
           user: '@Malu10',
           text: 'tudo bom povo!',
           image: null,
+        
         },
         {
           id: 5,
@@ -111,6 +127,7 @@ export default {
           user: '@sh22',
           text: 'Eu amo front end',
           image: null,
+       
         }
       ],
     };
@@ -130,6 +147,10 @@ export default {
     },
   },
   methods: {
+    getUserProfileImage(username) {
+      const user = this.users.find((user) => user.user === username);
+      return user ? user.userProfileImage : ''; // Retorna a URL da imagem de perfil do usuário ou uma string vazia se não encontrada
+    },
     performSearch(term) {
       this.search = term;
     },
@@ -176,7 +197,45 @@ export default {
     isProfilePrivate(profileUser) {
       const user = this.users.find((user) => user.user === profileUser);
       return user ? user.privado : false;
+    },   updateProfile() {
+      const name = localStorage.getItem('nome');
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      const profileImage = localStorage.getItem('userImage');
+
+      console.log('Dados do Local Storage para o perfil:');
+      console.log('Nome:', name);
+      console.log('Usuário:', user);
+      console.log('Email:', email);
+      console.log('Imagem de perfil:', profileImage);
+
+      // Verifica se o perfil já existe na lista com base no nome de usuário.
+      const existingProfile = this.users.find((profile) => profile.user === user);
+
+      if (existingProfile) {
+        // Atualiza os campos do perfil, incluindo a imagem do perfil, se disponível.
+        existingProfile.name = name || (email ? email.slice(0, email.indexOf('@')) : '');
+        if (profileImage) {
+          existingProfile.userProfileImage = profileImage;
+        }
+      } else {
+        // Adicione o novo perfil à lista com base nos dados do Local Storage.
+        this.users.push({
+          id: this.users.length,
+          name: name || (email ? email.slice(0, email.indexOf('@')) : ''),
+          user: user || (email ? '@' + email.slice(0, email.indexOf('@')) : ''),
+          privado: false,
+          userProfileImage: profileImage || '',
+        });
+      }
+
+      console.log('Perfis após a atualização:');
+      console.log(this.users);
     },
   },
-};
+  created() {
+    // Chame a função updateProfile no gancho created
+    this.updateProfile();
+  },
+  };
 </script>

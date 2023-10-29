@@ -21,8 +21,13 @@
         this.$emit('search-posts', this.search); 
       },
     },
-    props: {
-      messages: Array, 
+    message: {
+      type: Object,
+      required: true,
+    },
+    index: {
+      type: Number,
+      required: true,
     },
   };
   </script>
