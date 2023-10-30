@@ -124,17 +124,20 @@ mounted() {
     const userAuth = this.$store.getters.userAuth;
     if (userAuth && userAuth.email) {
       const userEmail = userAuth.email;
+      
+   
       localStorage.setItem('email', userEmail);
-      alert('Login feito com sucesso!');
+      
+     
       router.push({ name: 'home' });
     } else {
-      alert('Erro ao fazer login: Usuário não autenticado corretamente');
+      console('Erro ao fazer login: Usuário não autenticado corretamente');
     }
   } catch (error) {
-    console.error(error);
-    alert('Erro ao fazer login: ' + error.message);
+    console.error('Erro ao fazer login: ' + error.message);
   }
-},
+}
+,
 
 
 

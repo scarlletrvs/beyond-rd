@@ -6,12 +6,20 @@ async function handleGoogle() {
   try {
     const auth = getAuth();
     const result = await signInWithPopup(auth, provider);
+    const photo = auth.currentUser.photoURL;
+    const name = auth.currentUser.displayName;
+    const userGoogle= auth.currentUser.email;
+   
 
     const user = result.user;
     console.log('Usuário autenticado:', user);
 
     // Salve o email do usuário no local storage
     localStorage.setItem('email', user.email);
+    localStorage.setItem('userImage', photo);
+    localStorage.setItem('nome', name);
+    localStorage.setItem('userlocal',('@'+userGoogle.slice(0, userGoogle.indexOf('@'))));
+  
     
 
     

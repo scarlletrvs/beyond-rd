@@ -3,16 +3,28 @@
     <div class="timeline" style="flex-direction: column;">
       <BarraMenu :profileName="profileName" @deleteAllMessages="deleteAllMessages($event)" />
       <BarraPesquisa @search-posts="performSearch" />
-      <div style="display:flex; flex-direction: row; justify-content: start; width: 100%; background-color:#F9E1DF ; border: 1px solid grey; margin-top: 0.3rem;">
-        <div style="height: 20%; flex-direction: column; gap:2px; margin-left:  1.875rem; margin-top: 0.8rem; width:10%; display: flex; align-items: center;">
-          <v-img style="width: 7.5rem; height: auto; border: 2px solid black; border-radius: 50%; overflow: hidden;" :src="require('@/assets/malubeyond.jpg')"></v-img>
-          <h1 style="font-size: 3.5rem; color: black; font-size: medium; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
+      <div style="display:flex; flex-direction: row; justify-content: space-around; width: 100%; background-color:#F9E1DF ; border: 1px solid grey; margin-top: 0.3rem;  ">
+        <div style="width: 20%; flex-direction: column; gap:2px; margin-top: 1%; margin-bottom: 0.5%;  display: flex; align-items: center;">
+          <v-img
+  v-if="profileUser"
+  :src="getUserProfileImage(profileUser)"
+  style="width: 160px; height: 160px; object-fit: cover; border-radius: 50%; border: 2px solid black;"
+></v-img>
+<v-img
+  v-else
+  :src="formData.defaultUserProfileImage"
+  style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; border: 2px solid black;"
+></v-img>        
+        <h1 style="font-size: 3.5rem; color: black; font-size: medium; font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;">
             {{ profileName }}
           </h1>
+      </div>
+      <div>
+        
         </div>
-        <div style="width: 94%; height: 100%;">
-          <PostNew :profileName="profileName" :profile-user="profileUser" @sendMessages="sendMessages" />
-        </div>
+        <div style="width: 85%; height: 100%;">
+  <PostNew :profileName="profileName" :profileUser="profileUser" @sendMessages="sendMessages" v-if="profileUser === userDisplayUserLocal" />
+</div>
       </div>
 
       <div v-for="(message, index) in filteredMessages" :key="index" class="postagens">
@@ -48,7 +60,8 @@ export default {
       profileName: this.$route.params.userName,
       profileUser: this.$route.params.userNick,
       profileImage: '',
-      profileUndefined: 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png',      users: [
+      profileUndefined: 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png',      
+      users: [
         {
           id: 0,
           name: 'Maria Luiza',
@@ -133,6 +146,13 @@ export default {
     };
   },
   computed: {
+    userDisplayUserLocal() {
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      return user ||  ('@'+email.slice(0, email.indexOf('@')))
+;
+    },
+
     checkInput() {
       const imagem = this.imageInput;
       const texto = this.textInput;
@@ -149,7 +169,7 @@ export default {
   methods: {
     getUserProfileImage(username) {
       const user = this.users.find((user) => user.user === username);
-      return user ? user.userProfileImage : ''; // Retorna a URL da imagem de perfil do usuário ou uma string vazia se não encontrada
+      return user.userProfileImage ? user.userProfileImage : 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png'; // Retorna a URL da imagem de perfil do usuário ou uma string vazia se não encontrada
     },
     performSearch(term) {
       this.search = term;
@@ -197,7 +217,8 @@ export default {
     isProfilePrivate(profileUser) {
       const user = this.users.find((user) => user.user === profileUser);
       return user ? user.privado : false;
-    },   updateProfile() {
+    },
+      updateProfile() {
       const name = localStorage.getItem('nome');
       const user = localStorage.getItem('userlocal');
       const email = localStorage.getItem('email');

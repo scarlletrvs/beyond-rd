@@ -4,29 +4,30 @@
         <v-btn @click="voltar" class="voltar-button">Voltar</v-btn>
     <div class="cadastro">
       <h1 class="title">Cadastro</h1>
+      <p style="font-size: 14px; color:black; font-weight: 200;">Os campos que possuem '*' são obrigatótios preencher!</p>
       <div class="form-container">
         <div class="form-column form-column-left">
           <div class="form-group">
-            <label for="nome">Nome:</label>
+            <label for="nome">Nome: *</label>
             <input v-model="user.name" type="text" id="nome" placeholder="Digite seu nome" class="input-field">
           </div>
           <div class="form-group">
-            <label for="usuario">Usuário:</label>
+            <label for="usuario">Usuário: *</label>
             <input v-model="user.user" type="text" id="usuario" placeholder="Digite seu usuário" class="input-field">
           </div>
           <div class="form-group">
-            <label for="email">Email:</label>
+            <label for="email">Email: *</label>
             <input v-model="user.email" type="text" id="email" placeholder="Digite seu email" class="input-field">
           </div>
         </div>
         <div class="form-column form-column-right">
           <div class="form-group">
-            <label for="senha">Senha:</label>
+            <label for="senha">Senha: *</label>
             <input v-model="user.password" type="password" id="senha" placeholder="Digite sua senha" class="input-field">
           </div>
           <div class="form-group">
-            <label for="repetirSenha">Repetir Senha:</label>
-            <input type="password" id="repetirSenha" placeholder="Repita sua senha" class="input-field">
+            <label for="repetirSenha">Repetir Senha: *</label>
+            <input  v-model="user.repetirSenha" type="password" id="repetirSenha" placeholder="Repita sua senha" class="input-field">
           </div>
           <div class="form-group">
             <label for="imagem">Imagem:</label>
@@ -156,7 +157,13 @@ export default {
   
   data() {
     return {
-      user: {}
+    user: {
+    nome: '',
+    user: '',
+    email: '',
+    password: '',
+    repetirSenha: '',
+  }
     };
   },
   methods: {
@@ -186,17 +193,10 @@ export default {
     },
     async cadastrar() {
  
-      // const existeEmail = await firebase.auth().fetchSignInMethodsForEmail(this.user.email);
-
-      // if (existeEmail.length > 0) {
-        
-      //   alert('O email já está cadastrado!');
-      //   return;
-      // }
       localStorage.setItem("email", this.user.email);
       localStorage.setItem("nome", this.user.name);
-      localStorage.setItem("userlocal", this.user.user);
-
+      localStorage.setItem("userlocal", ('@'+this.user.user));
+     
 
       // Atualiza a tela de usuários
       this.$store.dispatch("loadUsers");

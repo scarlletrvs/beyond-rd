@@ -23,6 +23,7 @@
           :prepend-icon="'mdi-camera'"
           class="custom-file-input"
         ></v-file-input>
+    
         <v-btn  :disabled="checkInput" @click="sendMessages"   class="btn-postar">
         Postar
         </v-btn>
@@ -50,12 +51,12 @@
 
 .profiles{
   display: flex;
-  justify-content: start;
+  justify-content: start !important;
   flex-direction: column;
   height: auto;
   width:100%;
   padding-top: 0.8rem;
- 
+  padding-left: 2%;
   
   
 } 
@@ -65,6 +66,9 @@ font-family: Avenir, Helvetica, Arial, sans-serif;
 color: black;
 font-weight: 400;
 font-size: 20px;
+text-align: start;
+
+
 }
 
 .profileuser{
@@ -72,6 +76,7 @@ color:  gray;
 font-size: 15px;
 margin-bottom: 0rem;
 margin-top: -1.0rem;
+text-align: start;
 
 
 
@@ -99,18 +104,21 @@ margin-top: -1.0rem;
 
 
 .image-button{
+
   flex-direction: row;
   display: flex;
-  width: 30%;
+  width: 100%;
   margin-top: 0.4rem;
   align-self: flex-end;
-  margin-right: 2%;
+ justify-content: space-around;
+ padding-left: 2.5%;
+ padding-right: 2%;
   
   
 }
 .custom-file-input{
  margin-top:-0.6rem ;
- margin-left: 2.5rem;
+flex-grow: 1;
 
 
 }
@@ -125,7 +133,7 @@ margin-top: -1.0rem;
   }
 }
 .btn-postar{
-  width: 80%;
+  width: 30%;
   height: auto;
   border: 2px solid #938a8a;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -139,9 +147,8 @@ margin-top: -1.0rem;
 
 </style>
 
-
-
 <script>
+
 export default {
   data() {
     return {
@@ -152,16 +159,18 @@ export default {
   },
   methods: {
     sendMessages() {
-      const name = localStorage.getItem('nome') ;
-      const user = localStorage.getItem('userlocal') ;
+      const name = localStorage.getItem('nome');
+      const user = localStorage.getItem('userlocal');
       const email = localStorage.getItem('email');
 
+      // Emita o evento com as informações da mensagem e a imagem de perfil do usuário
       this.$emit('sendMessages', {
-  name: (name || (email ? email.slice(0, email.indexOf('@')) : null)),
-  user: (user || (email ? email.slice(0, email.indexOf('@')) : null)),
-  text: this.textInput,
-  image: this.imageInput,
-});
+        name: name || (email ? email.slice(0, email.indexOf('@')) : null),
+        user: user || (email ? email.slice(0, email.indexOf('@')) : null),
+        text: this.textInput,
+        image: this.imageInput,
+        userProfileImage: this.userProfileImage,
+      });
 
       this.textInput = '';
       this.imageInput = null;
@@ -173,14 +182,13 @@ export default {
       }
     },
   },
- 
   props: {
     profileName: {
-      type: String, // Correção: Deve ser String
+      type: String,
       required: true
     },
     profileUser: {
-      type: String, // Correção: Deve ser String
+      type: String,
       required: true
     },
     message: {
@@ -190,6 +198,11 @@ export default {
     index: {
       type: Number,
       required: true,
+    },
+    userProfileImage: {
+      type : String ,
+      required: true
+
     },
     
   },

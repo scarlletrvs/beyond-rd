@@ -12,7 +12,7 @@
       <div class="nav-content">
         <div class="nav-links">
           <router-link to="/">Home</router-link> |
-          <router-link :to="'/perfil/' + user.nome + '/' + user.user">Perfil</router-link> |
+          <router-link :to="'/perfil/' +  userDisplayName + '/' + userDisplayUserLocal">Perfil</router-link> |
           <router-link to="/usuarios">Usuários</router-link>
         </div>
         <div class="div-btn-sair">
@@ -148,15 +148,16 @@ users: [
   this.profileImage = this.getUserProfileImage(this.profileUser);
 },
   computed: {
-    user() {
-      const nome = localStorage.getItem('nome');
+    userDisplayName() {
+      const name = localStorage.getItem('nome');
+      const email =localStorage.getItem('email');
+      return name || (email ? email.slice(0, email.indexOf('@')) : null);
+    },
+    userDisplayUserLocal() {
       const user = localStorage.getItem('userlocal');
-      const email = localStorage.getItem('email');
-      if (!nome && !user) {
-        return { nome: email.slice(0, email.indexOf('@')), user: ('@' + email.slice(0, email.indexOf('@'))) };
-      } else {
-        return { nome, user };
-      }
+      const email =localStorage.getItem('email');
+      return user || ( '@' + email.slice(0, email.indexOf('@')));
+
     },
   },
   methods: {

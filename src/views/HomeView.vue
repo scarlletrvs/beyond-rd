@@ -9,7 +9,7 @@
       <BarraMenu :message="message" :index="index" @deleteAllMessages="deleteAllMessages($event)" />   
       <BarraPesquisa @search-posts="performSearch" :search="search" :profileUser="userUser" />
       <div style="margin-top: 3px; ">
-        <PostNew :profileName="userName" :profileUser="userUser" @sendMessages="sendMessages"  message="message"/>
+        <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser" @sendMessages="sendMessages"  message="message"/>
 
       </div>
       <div v-for="message in filteredMessages" :key="message.id" class="postagens">
@@ -95,6 +95,7 @@ export default {
       imageInput: null,
       editingImage: null,
       search: '',
+      img: '',
       users: [
         {
           id: 0,
@@ -180,26 +181,26 @@ export default {
 
  
   computed: {
-    profileImage() {
-      // Encontre o usuário correspondente ao usernick da rota
-      const user = this.users.find((user) => user.user === this.profileUser);
 
-      // Verifique se o usuário foi encontrado
-      if (user) {
-        // Verifique se o usuário tem uma imagem de perfil definida
-        if (user.userProfileImage) {
-          // Retorne a imagem de perfil do usuário encontrado
-          return user.userProfileImage;
-        } else {
-          // Se o usuário não tiver imagem de perfil, retorne a imagem padrão
-          return 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
-        }
-      } else {
-        // Se o usuário não for encontrado, retorne a imagem padrão
-        return 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
-      }
-    },  
   
+    userDisplayName() {
+      const name = localStorage.getItem('nome');
+      const email =localStorage.getItem('email');
+      return name || (email ? email.slice(0, email.indexOf('@')) : null);
+    },
+    userDisplayUserLocal() {
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      return user ||  ('@'+email.slice(0, email.indexOf('@')))
+;
+    },
+    userDisplayUser() {
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      return user ||  ('@'+email.slice(0, email.indexOf('@')))
+;
+    },
+
    
 
     checkInput() {
@@ -267,22 +268,22 @@ export default {
       
       this.$router.push(`/perfil/${username}`);
     },
-    updateUserNameAndUserUser() {
-  this.userName = localStorage.getItem('nome') || (localStorage.getItem('email') ? localStorage.getItem('email').slice(0, localStorage.getItem('email').indexOf('@')) : '');
-  this.userUser = localStorage.getItem('user') || (localStorage.getItem('email') ? ('@' + localStorage.getItem('email').slice(0, localStorage.getItem('email').indexOf('@'))) : '');
-}
-,
-    sendMessages(newMessage) {
-      const nome = this.userName || this.userEmail;
-      const user = this.userUser || this.userEmail;
+    
+    
 
+    sendMessages(newMessage) {
+      const email = localStorage.getItem('email');
+      const nome =  localStorage.getItem('nome')|| (email ? email.slice(0, email.indexOf('@')) : null);
+      const user = localStorage.getItem('userlocal') || (email ? '@'+email.slice(0, email.indexOf('@')) : null);
+      const img =localStorage.getItem('userImage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
       if (newMessage.text || newMessage.image) {
         this.messages.push({
           id: this.messages.length,
-          name: nome,
+          name:  nome,
           user: user,
           text: newMessage.text,
           image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
+          img:  img,
         });
       }
     },
@@ -316,6 +317,9 @@ export default {
       required: true,
     },
    
+  },
+  mounted() {
+    this.updateUserListHome();
   },
 };
 </script>

@@ -28,9 +28,9 @@
     </v-card-text>
     <v-img v-if="message.image" :src="message.image" class="v-img"></v-img>
     <v-row class="v-row">
-      <v-btn @click="openDialog()" v-if="message.id === postId" class="v-btn1">Editar</v-btn>
-      <v-btn @click="deleteMessages(message.id)" class="v-btn2">Excluir</v-btn>
-    </v-row>
+  <v-btn @click="openDialog()" v-if="message.user === userDisplayUserLocal" class="v-btn1">Editar</v-btn>
+  <v-btn @click="deleteMessages(message.id)" v-if="message.user === userDisplayUserLocal" class="v-btn2">Excluir</v-btn>
+</v-row>
     <v-row justify="center">
       <v-dialog v-model="dialog" persistent>
         <v-card>
@@ -94,6 +94,15 @@ export default {
   created() {
     this.updateProfile();
     this.associateProfileImageToMessage();
+
+  },
+  computed:{
+    userDisplayUserLocal() {
+      const user = localStorage.getItem('userlocal');
+      const email = localStorage.getItem('email');
+      return user ||  ('@'+email.slice(0, email.indexOf('@')))
+;
+    },
   },
   methods: {
     updateProfile() {
@@ -125,7 +134,7 @@ export default {
     associateProfileImageToMessage() {
   const user = this.users.find((u) => u.user === this.message.user);
   if (user) {
-    // Use a URL de userProfileImage se estiver definida, caso contrário, use defaultUserProfileImage.
+    // Use a URL de userProfileImage se estiver definida, caso contrário, use a imagem padrão.
     this.$set(this.message, 'profileImage', user.userProfileImage || this.defaultUserProfileImage);
   } else {
     // Se o usuário não for encontrado, use a imagem padrão.
@@ -179,7 +188,8 @@ export default {
   width: 98%;
   height: 30%;
   flex-direction: column;
-  background-color: pink;
+  background-color: pink !important;
+  
 }
 
 .card-subtitle {
@@ -188,6 +198,7 @@ export default {
   color: black;
   font-size: 0.9rem;
   margin-top: 0px;
+ 
 }
 
 .card-text1 {

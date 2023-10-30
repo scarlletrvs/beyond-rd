@@ -4,6 +4,25 @@ import Vuex from "vuex";
 import {auth} from "../config/index.js";
 import router from '../router/index.js';
 
+function camposPreenchidos(name, user,email, password, repetirSenha) {
+ 
+  return (
+    name !== '' &&
+    user !== '' &&
+    email !== '' &&
+    password !== '' &&
+    repetirSenha !== ''
+  );
+}
+
+// function validarNome(name) {
+//   console.log(typeof name)
+//   if (typeof name !== 'string' || name.length <= 1) {
+//     return false; // Se o nome não for válido, retorne falso
+//   }
+//   return true; // Se o nome for válido, retorne verdadeiro
+// }
+
 
 
 function validarEmail(email) {
@@ -16,6 +35,8 @@ function validarSenha(password) {
  
   return password.length >= 8;
 }
+
+
 
 Vue.use(Vuex);
 
@@ -73,9 +94,9 @@ actions:{
     }
 
     if (!passwordIsValid && emailIsValid) {
-     alert( 'A senha deve ter no minímo 9 caracteres!');      return;
+     alert( 'A senha deve ter no minímo 8 caracteres!');      return;
     }
-    
+   
     try {
       await signInWithEmailAndPassword(auth, email, password);
     } catch (error) {
@@ -93,63 +114,54 @@ actions:{
   
   
   async register({ commit }, details) {
-    const email = details.email || '';
-    const password = details.password || '';
-  
-    if (email === '' && password === '') {
-alert( 'Preencha os campos antes de cadastrar!');      return;
+    // Verificar se todos os campos do formulário foram preenchidos corretamente
+    if (!camposPreenchidos(details.name, details.user, details.email, details.password, details.repetirSenha)) {
+      console.log(details.name, details.user, details.email, details.password, details.repetirSenha)
+      alert('Preencha todos os campos corretamente!');
+      return;
     }
-    
 
-    if (email === '') {
-      alert( 'Preencha o email!');      return;
-      
-    }
+     
+    // if (!validarNome(details.nome)) {
+    //   alert('Preencha o campo nome corretamente!');
+    //   return;
+    // }
+    
   
-    if (password === '') {
-   alert( 'Preencha o campo senha');
+    if (!validarEmail(details.email)) {
+      alert('Preencha um email válido!');
       return;
     }
   
-    const emailIsValid = validarEmail(email);
-    const passwordIsValid = validarSenha(password);
-  
-    
-    if (!emailIsValid && !passwordIsValid) {
-     alert('Preencha os email e senha corretamente!');      return;
-      
+    if (!validarSenha(details.password)) {
+      alert('A senha deve ter no mínimo 8 caracteres!');
+      return;
     }
   
-    if (!emailIsValid && passwordIsValid) {
-      alert('Preencha os campo email corretamente');      return;
+    if (details.password !== details.repetirSenha) {
+      alert('As senhas não coincidem!');
+      return;
+    }
    
-      
-    }
-
-    if (!passwordIsValid && emailIsValid) {
-      alert('A senha deve ter no minímo 8 caracteres!');      return;
-      
-    }
-  
   
     try {
+      const email = details.email;
+      const password = details.password;
+  
       await createUserWithEmailAndPassword(auth, email, password);
-  
       commit('SET_USER', auth.currentUser);
-  
-     alert('Usuário cadastrado com sucesso!');      
-  
+      alert('Usuário cadastrado com sucesso!');
       // Redireciona para a tela inicial (home) após o registro bem-sucedido
       router.push({ name: 'home' });
     } catch (error) {
-     alert( 'Não possivél concluir o cadastrao, verifique as informações e tente novamente!');      
-      
+      alert('Email já cadastrado, tente outro!');
       console.log(error.message);
     } finally {
       // Limpa os campos
       commit('reset');
     }
-  },
+  }
+  ,
 
   async logout({ commit }) {
     await signOut(auth);
