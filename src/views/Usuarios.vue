@@ -110,8 +110,6 @@ export default {
       const user = localStorage.getItem('userlocal');
       const email = localStorage.getItem('email');
      
-
-      // Adicione o novo usuário à lista
       this.users.push({
   id: this.users.length,
   name: name || (email ? email.slice(0, email.indexOf('@')) : ''),

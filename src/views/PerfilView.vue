@@ -23,14 +23,21 @@
         
         </div>
         <div style="width: 85%; height: 100%;">
-  <PostNew :profileName="profileName" :profileUser="profileUser" @sendMessages="sendMessages" v-if="profileUser === userDisplayUserLocal" />
+      <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser" @sendMessages="sendMessages"  message="message"/>
 </div>
       </div>
 
       <div v-for="(message, index) in filteredMessages" :key="index" class="postagens">
     <div class="post-card-container">
-      <PostCard :message="message" :index="index" @deleteMessages="deleteMessages($event)" @editMessages="editMessages($event)" :postId="message.id" :profileUser="message.user" v-if="!isProfilePrivate(profileUser)" />
-    </div>
+      <PostCard
+  :message="message"
+  :index="index"
+  :profileImage="profileImage"
+  @deleteMessages="deleteMessages($event)"
+  @editMessages="editMessages($event)"
+  :postId="message.id"
+  :profileUser="message.user"
+/>    </div>
   </div>
 
     </div>
@@ -43,6 +50,8 @@ import PostCard from '@/components/PostCard.vue';
 import BarraMenu from '@/components/BarraMenu.vue';
 import PostNew from '@/components/PostNew.vue';
 import BarraPesquisa from '@/components/BarraPesquisa.vue';
+import { format } from 'date-fns';
+
 
 export default {
   components: {
@@ -95,13 +104,14 @@ export default {
        
       ],
       messages: [
-        {
+      {
           id: 0,
           name: 'Maria Luiza',
           user: '@Malu10',
           text: 'oi bom dia!',
           image: null,
-          
+          privado: false,
+          timestamp: '22/10/23  20:52:01'
         },
         {
           id: 1,
@@ -109,7 +119,8 @@ export default {
           user: '@vt10',
           text: 'sem bom dia!',
           image: null,
-        
+          privado: false,
+          timestamp: '25/10/23  10:52:01'
         },
         {
           id: 2,
@@ -117,7 +128,8 @@ export default {
           user: '@pedro200',
           text: 'bom dia!',
           image: null,
-          
+          privado: true,
+          timestamp: '29/10/23  13:10:01'
         },
         {
           id: 3,
@@ -125,7 +137,8 @@ export default {
           user: '@Malu10',
           text: 'oi gente!',
           image: null,
-      
+          privado: false,
+          timestamp: '30/10/23  01:10:01'
         },
         {
           id: 4,
@@ -133,7 +146,8 @@ export default {
           user: '@Malu10',
           text: 'tudo bom povo!',
           image: null,
-        
+          privado: false,
+          timestamp: '31/10/23  03:10:01'
         },
         {
           id: 5,
@@ -141,7 +155,8 @@ export default {
           user: '@sh22',
           text: 'Eu amo front end',
           image: null,
-       
+          privado: false,
+          timestamp: '31/10/23  00:20:01'
         }
       ],
       
@@ -175,7 +190,7 @@ export default {
     },
     performSearch(term) {
       this.search = term;
-    //   this.filteredMessages = this.filterMessagesBySearch(this.search.toLowerCase(), this.profileUser);
+   
     },
   filterMessagesBySearch(searchTerm, profileUser) {
   return this.messages.filter((message) => {
@@ -186,17 +201,31 @@ export default {
     filterMessagesByProfileName(profileName) {
       return this.messages.filter((message) => message.name.toLowerCase() === profileName);
     },
+    
     sendMessages(newMessage) {
-      if (newMessage.text || newMessage.image) {
-        this.messages.push({
-          id: this.messages.length,
-          name: this.profileName,
-          user: this.profileUser,
-          text: newMessage.text,
-          image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
-        });
-      }
-    },
+  if (newMessage.text || newMessage.image) {
+    const img = localStorage.getItem('userimage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
+
+  
+    newMessage.img = img;
+
+    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); 
+
+    this.messages.unshift({
+      id: this.messages.length, 
+      name: this.profileName,
+      user: this.profileUser,
+      text: newMessage.text,
+      image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
+      timestamp: timestamp, 
+    });
+  }
+}
+
+
+
+
+,
     deleteMessages(id) {
       this.messages = this.messages.filter((message) => message.id !== id);
     },
@@ -232,23 +261,24 @@ export default {
       console.log('Email:', email);
       console.log('Imagem de perfil:', profileImage);
 
-      // Verifica se o perfil já existe na lista com base no nome de usuário.
+     
       const existingProfile = this.users.find((profile) => profile.user === user);
 
       if (existingProfile) {
-        // Atualiza os campos do perfil, incluindo a imagem do perfil, se disponível.
+        
         existingProfile.name = name || (email ? email.slice(0, email.indexOf('@')) : '');
         if (profileImage) {
           existingProfile.userProfileImage = profileImage;
         }
       } else {
-        // Adicione o novo perfil à lista com base nos dados do Local Storage.
+        
         this.users.push({
+          
           id: this.users.length,
           name: name || (email ? email.slice(0, email.indexOf('@')) : ''),
           user: user || (email ? '@' + email.slice(0, email.indexOf('@')) : ''),
           privado: false,
-          userProfileImage: profileImage || '',
+          userProfileImage: profileImage || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png',
         });
       }
 
@@ -257,7 +287,7 @@ export default {
     },
   },
   created() {
-    // Chame a função updateProfile no gancho created
+    
     this.updateProfile();
   },
   };

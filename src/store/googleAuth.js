@@ -20,13 +20,7 @@ async function handleGoogle() {
     localStorage.setItem('nome', name);
     localStorage.setItem('userlocal',('@'+userGoogle.slice(0, userGoogle.indexOf('@'))));
   
-    
-
-    
-
-    
-
-    // Redirecione para a rota 'home'
+  
     window.location.href = '/home';
 
   } catch (error) {

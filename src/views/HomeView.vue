@@ -71,6 +71,8 @@
 </style>
 
 <script>
+import { format } from 'date-fns';
+
 import PostCard from '@/components/PostCard.vue'; 
 import BarraMenu from '@/components/BarraMenu.vue';
 import PostNew from '@/components/PostNew.vue';
@@ -134,6 +136,7 @@ export default {
           text: 'oi bom dia!',
           image: null,
           privado: false,
+          timestamp: '22/10/23  20:52:01'
         },
         {
           id: 1,
@@ -142,6 +145,7 @@ export default {
           text: 'sem bom dia!',
           image: null,
           privado: false,
+          timestamp: '25/10/23  10:52:01'
         },
         {
           id: 2,
@@ -150,6 +154,7 @@ export default {
           text: 'bom dia!',
           image: null,
           privado: true,
+          timestamp: '29/10/23  13:10:01'
         },
         {
           id: 3,
@@ -158,6 +163,7 @@ export default {
           text: 'oi gente!',
           image: null,
           privado: false,
+          timestamp: '30/10/23  01:10:01'
         },
         {
           id: 4,
@@ -166,6 +172,7 @@ export default {
           text: 'tudo bom povo!',
           image: null,
           privado: false,
+          timestamp: '31/10/23  03:10:01'
         },
         {
           id: 5,
@@ -174,6 +181,7 @@ export default {
           text: 'Eu amo front end',
           image: null,
           privado: false,
+          timestamp: '31/10/23  00:20:01'
         }
       ],
     };
@@ -270,23 +278,26 @@ export default {
     },
     
     
-
     sendMessages(newMessage) {
-      const email = localStorage.getItem('email');
-      const nome =  localStorage.getItem('nome')|| (email ? email.slice(0, email.indexOf('@')) : null);
-      const user = localStorage.getItem('userlocal') || (email ? '@'+email.slice(0, email.indexOf('@')) : null);
-      const img =localStorage.getItem('userImage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
-      if (newMessage.text || newMessage.image) {
-        this.messages.push({
-          id: this.messages.length,
-          name:  nome,
-          user: user,
-          text: newMessage.text,
-          image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
-          img:  img,
-        });
-      }
-    },
+  const email = localStorage.getItem('email');
+  const nome = localStorage.getItem('nome') || (email ? email.slice(0, email.indexOf('@')) : null);
+  const user = localStorage.getItem('userlocal') || (email ? '@' + email.slice(0, email.indexOf('@')) : null);
+  const img = localStorage.getItem('userImage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
+
+  if (newMessage.text || newMessage.image) {
+    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); // Formata a data e hora atual
+    this.messages.unshift({
+      id: this.messages.length,  // Você pode considerar outra lógica para gerar IDs únicos.
+      name: nome,
+      user: user,
+      text: newMessage.text,
+      image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
+      img: img,
+      timestamp: timestamp, // Adiciona a data e hora à mensagem
+    });
+  }
+},
+
     deleteMessages(id) {
       this.messages = this.messages.filter((message) => message.id !== id);
     },

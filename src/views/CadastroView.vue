@@ -85,18 +85,17 @@
 .form-column {
   display: flex;
   flex-direction: column;
-  gap: 3.0rem; /* Aumente o valor do gap para aumentar a distância entre as colunas */
-}
+  gap: 3.0rem; }
 
 .form-column-left {
   margin-right: .5%;
   width: 50%;
-   /* Adicione margem à direita para a coluna da esquerda */
+  
 }
 
 .form-column-right {
   margin-left: 8.5%;
-  width: 50%; /* Adicione margem à esquerda para a coluna da direita */
+  width: 50%; 
 }
   
 .form-group {
@@ -177,10 +176,9 @@ export default {
       reader.onload = (e) => {
         const base64Image = e.target.result;
 
-        // Armazene a imagem no Local Storage
         localStorage.setItem('userImage', base64Image);
 
-        // Atribua a imagem à propriedade profileImage do perfil
+       
         this.user.profileImage = base64Image;
       };
 

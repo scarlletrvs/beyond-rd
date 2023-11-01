@@ -129,7 +129,7 @@
    transition: color 0.3s; 
    
    &:hover {
-     color: pink; /* Altere a cor para rosa ao passar o mouse */
+     color: pink; 
    }
  }
  .btn-postar{
@@ -158,23 +158,27 @@
      };
    },
    methods: {
-     sendMessages() {
-       const name = localStorage.getItem('nome');
-       const user = localStorage.getItem('userlocal');
-       const email = localStorage.getItem('email');
- 
-       // Emita o evento com as informações da mensagem e a imagem de perfil do usuário
-       this.$emit('sendMessages', {
-         name: name || (email ? email.slice(0, email.indexOf('@')) : null),
-         user: user || (email ? email.slice(0, email.indexOf('@')) : null),
-         text: this.textInput,
-         image: this.imageInput,
-         userProfileImage: this.userProfileImage,
-       });
- 
-       this.textInput = '';
-       this.imageInput = null;
-     },
+    sendMessages() {
+    const name = localStorage.getItem('nome');
+    const user = localStorage.getItem('userlocal');
+    const email = localStorage.getItem('email');
+
+   
+    const currentDate = new Date();
+    const timestamp = currentDate.toLocaleString(); 
+    
+    this.$emit('sendMessages', {
+      name: name || (email ? email.slice(0, email.indexOf('@')) : null),
+      user: user || (email ? email.slice(0, email.indexOf('@')) : null),
+      text: this.textInput,
+      image: this.imageInput,
+      userProfileImage: this.userProfileImage,
+      timestamp: timestamp, 
+    });
+
+    this.textInput = '';
+    this.imageInput = null;
+  },
      onImageChange(event) {
        const selectedFile = event.target.files[0];
        if (selectedFile) {
@@ -204,6 +208,9 @@
        required: true
  
      },
+     
+ 
+
      
    },
  };

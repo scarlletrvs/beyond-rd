@@ -114,7 +114,7 @@ actions:{
   
   
   async register({ commit }, details) {
-    // Verificar se todos os campos do formulário foram preenchidos corretamente
+   
     if (!camposPreenchidos(details.name, details.user, details.email, details.password, details.repetirSenha)) {
       console.log(details.name, details.user, details.email, details.password, details.repetirSenha)
       alert('Preencha todos os campos corretamente!');
@@ -151,13 +151,13 @@ actions:{
       await createUserWithEmailAndPassword(auth, email, password);
       commit('SET_USER', auth.currentUser);
       alert('Usuário cadastrado com sucesso!');
-      // Redireciona para a tela inicial (home) após o registro bem-sucedido
+     
       router.push({ name: 'home' });
     } catch (error) {
       alert('Email já cadastrado, tente outro!');
       console.log(error.message);
     } finally {
-      // Limpa os campos
+     
       commit('reset');
     }
   }

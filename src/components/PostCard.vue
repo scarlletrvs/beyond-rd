@@ -22,6 +22,7 @@
           <router-link :to="'/perfil/' + message.name + '/' + message.user" style="color: gray;">{{ message.user }}</router-link>
         </v-card-text>
       </div>
+      <v-card-text>{{ message.timestamp }}</v-card-text>
     </div>
     <v-card-text style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; color: black; font-size: 0.9rem; margin-left: 5px; margin-top: -1.4rem;">
       {{ message.text }}
@@ -111,33 +112,33 @@ export default {
       const email = localStorage.getItem('email');
       const profileImage = localStorage.getItem('userImage');
 
-      // Verifica se o perfil já existe na lista com base no nome de usuário.
+    
       const existingProfile = this.users.find((profile) => profile.user === user);
 
       if (existingProfile) {
-        // Atualiza os campos do perfil, incluindo a imagem do perfil, se disponível.
+        
         existingProfile.name = name || (email ? email.slice(0, email.indexOf('@')) : '');
         if (profileImage) {
           existingProfile.userProfileImage = profileImage;
         }
       } else {
-        // Adicione o novo perfil à lista com base nos dados do Local Storage.
+        
         this.users.push({
           id: this.users.length,
           name: name || (email ? email.slice(0, email.indexOf('@')) : ''),
           user: user || (email ? '@' + email.slice(0, email.indexOf('@')) : ''),
           privado: false,
-          userProfileImage: profileImage || '',
+          userProfileImage: profileImage || 'https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg',
         });
       }
     },
     associateProfileImageToMessage() {
   const user = this.users.find((u) => u.user === this.message.user);
   if (user) {
-    // Use a URL de userProfileImage se estiver definida, caso contrário, use a imagem padrão.
+   
     this.$set(this.message, 'profileImage', user.userProfileImage || this.defaultUserProfileImage);
   } else {
-    // Se o usuário não for encontrado, use a imagem padrão.
+  
     this.$set(this.message, 'profileImage', this.defaultUserProfileImage);
   }
 },
