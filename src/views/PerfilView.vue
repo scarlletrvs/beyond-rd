@@ -28,10 +28,11 @@
       </div>
 
       <div v-for="(message, index) in filteredMessages" :key="index" class="postagens">
-        <div class="post-card-container">
-          <PostCard :message="message" :index="index" @deleteMessages="deleteMessages($event)" @editMessages="editMessages($event)" :postId="message.id" :profileUser="message.user" v-if="!isProfilePrivate(profileUser)" />
-        </div>
-      </div>
+    <div class="post-card-container">
+      <PostCard :message="message" :index="index" @deleteMessages="deleteMessages($event)" @editMessages="editMessages($event)" :postId="message.id" :profileUser="message.user" v-if="!isProfilePrivate(profileUser)" />
+    </div>
+  </div>
+
     </div>
     <v-main></v-main>
   </v-app>
@@ -143,6 +144,7 @@ export default {
        
         }
       ],
+      
     };
   },
   computed: {
@@ -160,9 +162,9 @@ export default {
     },
     filteredMessages() {
       if (this.search) {
-        return this.filterMessagesBySearch(this.search.toLowerCase()); 
+        return this.filterMessagesBySearch(this.search.toLowerCase(), this.profileUser);
       } else {
-        return this.filterMessagesByProfileName(this.profileName.toLowerCase()); 
+        return this.filterMessagesByProfileName(this.profileName.toLowerCase());
       }
     },
   },
@@ -173,14 +175,14 @@ export default {
     },
     performSearch(term) {
       this.search = term;
+    //   this.filteredMessages = this.filterMessagesBySearch(this.search.toLowerCase(), this.profileUser);
     },
-    filterMessagesBySearch(searchTerm) {
-      return this.messages.filter((message) => {
-        return (
-          message.text.toLowerCase().includes(searchTerm)
-        );
-      });
-    },
+  filterMessagesBySearch(searchTerm, profileUser) {
+  return this.messages.filter((message) => {
+    return message.user === profileUser && message.text.toLowerCase().includes(searchTerm.toLowerCase());
+  });
+},
+
     filterMessagesByProfileName(profileName) {
       return this.messages.filter((message) => message.name.toLowerCase() === profileName);
     },

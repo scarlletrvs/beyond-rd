@@ -82,7 +82,7 @@ p {
 }
 
 .google-button {
-  background-image: url('~@/assets/google.png'); /* Use ~@ para indicar o diretório de ativos do Vue CLI */
+  background-image: url('~@/assets/google.png'); 
   background-size: cover;
   
   width: 20%;
@@ -115,7 +115,7 @@ mounted() {
  methods: {
 
   handleGoogle() {
-      handleGoogle(); // Chame a função handleGoogle para autenticar com o Google
+      handleGoogle(); 
     },
 
     async logar() {
