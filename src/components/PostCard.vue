@@ -128,7 +128,7 @@ export default {
           name: name || (email ? email.slice(0, email.indexOf('@')) : ''),
           user: user || (email ? '@' + email.slice(0, email.indexOf('@')) : ''),
           privado: false,
-          userProfileImage: profileImage || 'https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg',
+          userProfileImage: profileImage || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png',
         });
       }
     },

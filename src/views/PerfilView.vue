@@ -191,7 +191,7 @@ export default {
   methods: {
     getUserProfileImage(username) {
       const user = this.users.find((user) => user.user === username);
-      return user.userProfileImage ? user.userProfileImage : 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png'; // Retorna a URL da imagem de perfil do usuário ou uma string vazia se não encontrada
+      return user.userProfileImage ? user.userProfileImage :  'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png'; 
     },
     performSearch(term) {
       this.search = term;
@@ -209,7 +209,7 @@ export default {
     
     sendMessages(newMessage) {
   if (newMessage.text || newMessage.image) {
-
+    const img= localStorage.getItem('photoURL') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
     const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); 
 
     this.messages.unshift({
@@ -219,7 +219,7 @@ export default {
       text: newMessage.text,
       image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
       timestamp: timestamp, 
-      userProfileImage:this.userDisplayImage
+      img:img
     });
   }
 }

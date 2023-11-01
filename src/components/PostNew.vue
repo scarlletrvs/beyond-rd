@@ -128,9 +128,7 @@
    font-size: 2.6rem;
    transition: color 0.3s; 
    
-   &:hover {
-     color: pink; 
-   }
+   
  }
  .btn-postar{
    width: 30%;

@@ -7,9 +7,10 @@
       <h3 class="label">Senha:</h3>
       <input v-model="user.password" type="password" placeholder="Digite sua senha" class="input-field">
       <div class="botoes">
-        <v-btn style="width: 20%;" @click="logar"><p style="font-size: 0.8rem;">Logar</p></v-btn>
-        <v-btn style="width: 20%" @click="cadastro"><p style="font-size: 0.8rem;">Cadastro</p></v-btn>
-        <v-btn class="google-button" @click="handleGoogle"></v-btn>
+        <v-btn style="width: 25%;" @click="logar"><p style="font-size: 0.8rem;">Logar</p></v-btn>
+        <v-btn style="width: 25%; "  @click="cadastro"><p style="font-size: 0.8rem;">Cadastro</p></v-btn>
+        <v-btn    class="google-button" @click="handleGoogle" 
+        >Entrar com  <v-icon  style="margin-left: 3px; color: rgb(148, 20, 114);" >mdi-google</v-icon></v-btn>
     </div>
 
     
@@ -82,10 +83,14 @@ p {
 }
 
 .google-button {
-  background-image: url('~@/assets/google.png'); 
-  background-size: cover;
+  /* background-image: url('~@/assets/google.png');  */
+ 
+  flex-direction: row !important;
+  display: flex  !important;
   
-  width: 20%;
+  gap: 6px  !important;
+  height: 100%  !important;
+  width: 25%;
   
 
 }

@@ -57,18 +57,22 @@ const router = new VueRouter({
   base: process.env.BASE_URL,
   routes
 });
-
 router.beforeEach((to, from, next) => {
-  if (to.matched.some((record) => record.meta.requiresAuth) && !auth.currentUser) {
-    
-    next("/login");
-  } else if (to.path === "/login" && auth.currentUser && from.path !== '/') {
-    
-    next("/");
-  } else {
-   
+  auth.onAuthStateChanged((user) => {
+    if (to.path === "/login" && user) {
+      next("/");
+      return;
+    }
+    if (to.path === "/cadastro" && user) {
+      next("/");
+      return;
+    }
+    if (to.matched.some((record) => record.meta.requiresAuth) && !user) {
+      next("login");
+      return;
+    }
     next();
-  }
+  });
 });
 
 

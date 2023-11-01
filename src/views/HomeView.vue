@@ -295,7 +295,7 @@ export default {
       user: user,
       text: newMessage.text,
       image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
-      userProfileImage: img,
+      img: img,
       timestamp: timestamp,
     });
   }
