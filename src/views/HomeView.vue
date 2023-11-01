@@ -9,7 +9,7 @@
       <BarraMenu :message="message" :index="index" @deleteAllMessages="deleteAllMessages($event)" />   
       <BarraPesquisa @search-posts="performSearch" :search="search" :profileUser="userUser" />
       <div style="margin-top: 3px; ">
-        <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser" @sendMessages="sendMessages"  message="message"/>
+        <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser" :profileImage="userDisplayImage" @sendMessages="sendMessages"  message="message"/>
 
       </div>
       <div v-for="message in filteredMessages" :key="message.id" class="postagens">
@@ -208,6 +208,10 @@ export default {
       return user ||  ('@'+email.slice(0, email.indexOf('@')))
 ;
     },
+    userDisplayImage() {
+      const image = localStorage.getItem('userimage');
+      return image ||  this.defaultUserProfileImage
+    },
 
    
 
@@ -246,10 +250,10 @@ export default {
     associateProfileImageToMessage() {
   const user = this.users.find((u) => u.user === this.message.user);
   if (user) {
-    // Use a URL de userProfileImage se estiver definida, caso contrário, use defaultUserProfileImage.
+   
     this.$set(this.message, 'profileImage', user.userProfileImage || this.defaultUserProfileImage);
   } else {
-    // Se o usuário não for encontrado, use a imagem padrão.
+  
     this.$set(this.message, 'profileImage', this.defaultUserProfileImage);
   }
 },
@@ -258,7 +262,6 @@ export default {
     handleScroll() {
     const scrollPosition = window.scrollY;
 
-    // Defina 500 para o valor desejado em pixels
     if (scrollPosition > 500) {
       this.showScrollButton = true;
     } else {
@@ -285,15 +288,15 @@ export default {
   const img = localStorage.getItem('userImage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
 
   if (newMessage.text || newMessage.image) {
-    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); // Formata a data e hora atual
+    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); 
     this.messages.unshift({
-      id: this.messages.length,  // Você pode considerar outra lógica para gerar IDs únicos.
+      id: this.messages.length, 
       name: nome,
       user: user,
       text: newMessage.text,
       image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
-      img: img,
-      timestamp: timestamp, // Adiciona a data e hora à mensagem
+      userProfileImage: img,
+      timestamp: timestamp,
     });
   }
 },

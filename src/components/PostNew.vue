@@ -156,6 +156,12 @@
        imageInput: null,
        checkInput: false,
      };
+   }, computed:{
+    userDisplayImage() {
+      const image = localStorage.getItem('userimage');
+      return image ||  this.defaultUserProfileImage
+    },
+
    },
    methods: {
     sendMessages() {
@@ -172,7 +178,7 @@
       user: user || (email ? email.slice(0, email.indexOf('@')) : null),
       text: this.textInput,
       image: this.imageInput,
-      userProfileImage: this.userProfileImage,
+      userProfileImage: this.userDisplayImage,
       timestamp: timestamp, 
     });
 

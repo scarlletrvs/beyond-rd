@@ -23,7 +23,7 @@
         
         </div>
         <div style="width: 85%; height: 100%;">
-      <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser" @sendMessages="sendMessages"  message="message"/>
+      <PostNew :profileName=" userDisplayName" :profileUser="userDisplayUser"  :profileImage="userDisplayImage" @sendMessages="sendMessages"  message="message"/>
 </div>
       </div>
 
@@ -169,6 +169,11 @@ export default {
       return user ||  ('@'+email.slice(0, email.indexOf('@')))
 ;
     },
+    userDisplayImage() {
+      const image = localStorage.getItem('userimage');
+      return image ||  this.defaultUserProfileImage
+    },
+
 
     checkInput() {
       const imagem = this.imageInput;
@@ -204,10 +209,6 @@ export default {
     
     sendMessages(newMessage) {
   if (newMessage.text || newMessage.image) {
-    const img = localStorage.getItem('userimage') || 'https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png';
-
-  
-    newMessage.img = img;
 
     const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss"); 
 
@@ -218,6 +219,7 @@ export default {
       text: newMessage.text,
       image: newMessage.image ? URL.createObjectURL(newMessage.image) : null,
       timestamp: timestamp, 
+      userProfileImage:this.userDisplayImage
     });
   }
 }
