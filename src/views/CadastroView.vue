@@ -1,37 +1,73 @@
 <template>
-    
   <div class="page">
-        <v-btn @click="voltar" class="voltar-button">Voltar</v-btn>
+    <v-btn @click="voltar" class="voltar-button">Voltar</v-btn>
     <div class="cadastro">
       <h1 class="title">Cadastro</h1>
-      <p style="font-size: 14px; color:black; font-weight: 200;">Os campos que possuem '*' são obrigatótios preencher!</p>
+      <p style="font-size: 14px; color: pink; font-weight: 200">
+        Os campos que possuem '*' são obrigatótios preencher!
+      </p>
       <div class="form-container">
         <div class="form-column form-column-left">
           <div class="form-group">
             <label for="nome">Nome: *</label>
-            <input v-model="user.name" type="text" id="nome" placeholder="Digite seu nome" class="input-field">
+            <input
+              v-model="user.name"
+              type="text"
+              id="nome"
+              placeholder="Digite seu nome"
+              class="input-field"
+            />
           </div>
           <div class="form-group">
             <label for="usuario">Usuário: *</label>
-            <input v-model="user.user" type="text" id="usuario" placeholder="Digite seu usuário" class="input-field">
+            <input
+              v-model="user.user"
+              type="text"
+              id="usuario"
+              placeholder="Digite seu usuário"
+              class="input-field"
+            />
           </div>
           <div class="form-group">
             <label for="email">Email: *</label>
-            <input v-model="user.email" type="text" id="email" placeholder="Digite seu email" class="input-field">
+            <input
+              v-model="user.email"
+              type="text"
+              id="email"
+              placeholder="Digite seu email"
+              class="input-field"
+            />
           </div>
         </div>
         <div class="form-column form-column-right">
           <div class="form-group">
             <label for="senha">Senha: *</label>
-            <input v-model="user.password" type="password" id="senha" placeholder="Digite sua senha" class="input-field">
+            <input
+              v-model="user.password"
+              type="password"
+              id="senha"
+              placeholder="Digite sua senha"
+              class="input-field"
+            />
           </div>
           <div class="form-group">
             <label for="repetirSenha">Repetir Senha: *</label>
-            <input  v-model="user.repetirSenha" type="password" id="repetirSenha" placeholder="Repita sua senha" class="input-field">
+            <input
+              v-model="user.repetirSenha"
+              type="password"
+              id="repetirSenha"
+              placeholder="Repita sua senha"
+              class="input-field"
+            />
           </div>
           <div class="form-group">
             <label for="imagem">Imagem:</label>
-            <input type="file"  @change="processImage" id="imagem" class="input-field">
+            <input
+              type="file"
+              @change="processImage"
+              id="imagem"
+              class="input-field"
+            />
           </div>
         </div>
       </div>
@@ -67,7 +103,8 @@
   margin-bottom: 0.5rem;
   color: white;
   font-size: 1.5rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 .voltar-button {
@@ -85,19 +122,19 @@
 .form-column {
   display: flex;
   flex-direction: column;
-  gap: 3.0rem; }
+  gap: 3rem;
+}
 
 .form-column-left {
-  margin-right: .5%;
+  margin-right: 0.5%;
   width: 50%;
-  
 }
 
 .form-column-right {
   margin-left: 8.5%;
-  width: 50%; 
+  width: 50%;
 }
-  
+
 .form-group {
   display: flex;
   flex-direction: column;
@@ -121,12 +158,14 @@ label {
   color: black;
   font-size: 1.2rem;
   padding-left: 0.3rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
 p {
-  font-size: 1.0rem;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-size: 1rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
   text-align: center;
 }
 
@@ -136,83 +175,321 @@ body {
 }
 
 .save-button {
-  width: 25%; 
-  margin-top: 0.9rem; 
+  width: 25%;
+  margin-top: 0.9rem;
   padding: 0.5rem;
   border: none;
   border-radius: 4px;
-  color: black; 
+  color: black;
   font-size: 1.2rem;
   background-color: white;
+  padding-bottom: 1.5%;
+}
+
+
+@media (min-width: 800px) and (max-width:870px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 65%;
+  height: auto;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+
+}
+
+@media (min-width: 700px) and (max-width:800px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 70%;
+  height: auto;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+
+}
+
+@media (min-width: 650px) and (max-width:700px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 75%;
+  height: auto;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+
+}
+@media (min-width: 600px) and (max-width:650px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 80%;
+  height: auto;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+
+}
+
+
+@media (min-width: 530px) and (max-width:600px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 83%;
+  height: auto;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+.label {
+  font-size: 1rem;
+  color: black;
+  margin-left: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.p{
+  margin-bottom: 0.4rem;
+
+}
+.title{
+  font-size: 24px;
+}
+
+
+
+}
+
+
+
+@media (min-width: 400px) and (max-width:530px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 83%;
+  height:93%;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+.label {
+  font-size: 1rem;
+  color: black;
+  margin-left: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.p{
+  margin-bottom: 0.4rem;
+
+}
+.title{
+  font-size: 24px;
+}
+.voltar-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-column-left {
+  
+  width: 100%;
+}
+
+.form-column-right {
+ margin-left: -0.5%;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.page{
+  flex-direction: column;
+}
+.save-button {
+  width: 30%;
+
+}
+
+
+
+
+}
+
+@media (min-width: 330px) and (max-width:400px ) {
+  .cadastro {
+  flex-direction: column;
+  background-color: rgb(148, 20, 114);
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  width: 83%;
+  height:96%;
+  border-radius: 40px;
+  border: 2px solid white;
+}
+.label {
+  font-size: 1rem;
+  color: black;
+  margin-left: 0.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.p{
+  margin-bottom: 0.4rem;
+
+}
+.title{
+  font-size: 24px;
+}
+.voltar-button {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+}
+
+.form-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.form-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-column-left {
+  
+  width: 100%;
+}
+
+.form-column-right {
+ margin-left: -0.5%;
+  width: 100%;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.page{
+  flex-direction: column;
+}
+.p{
+  font-size: 10px;
+}
+.save-button {
+  width: 35%;
+
+}
+
+
+
 }
 </style>
 
-  
-  <script>
-  import router from '../router/index';
-  // import firebase from 'firebase';
+<script>
+import router from "../router/index";
+// import firebase from 'firebase';
 
 export default {
-  
   data() {
     return {
-    user: {
-    nome: '',
-    user: '',
-    email: '',
-    password: '',
-    repetirSenha: '',
-  }
+      user: {
+        nome: "",
+        user: "",
+        email: "",
+        password: "",
+        repetirSenha: "",
+      },
     };
   },
   methods: {
-
     processImage(event) {
-    const file = event.target.files[0];
+      const file = event.target.files[0];
 
-    if (file) {
-      const reader = new FileReader();
+      if (file) {
+        const reader = new FileReader();
 
-      reader.onload = (e) => {
-        const base64Image = e.target.result;
+        reader.onload = (e) => {
+          const base64Image = e.target.result;
 
-        localStorage.setItem('userImage', base64Image);
+          localStorage.setItem("userImage", base64Image);
 
-       
-        this.user.profileImage = base64Image;
-      };
+          this.user.profileImage = base64Image;
+        };
 
-      reader.readAsDataURL(file);
-    }
-  },
+        reader.readAsDataURL(file);
+      }
+    },
 
     voltar() {
-      router.push({ name: 'login' });
+      router.push({ name: "login" });
     },
     async cadastrar() {
- 
       localStorage.setItem("email", this.user.email);
       localStorage.setItem("nome", this.user.name);
-      localStorage.setItem("userlocal", ('@'+this.user.user));
-     
+      localStorage.setItem("userlocal", "@" + this.user.user);
 
       // Atualiza a tela de usuários
       this.$store.dispatch("loadUsers");
 
-     
-      await this.$store.dispatch('register', this.user);
+      await this.$store.dispatch("register", this.user);
       if (this.$auth.isLoggedIn()) {
-  const email = localStorage.getItem('email');
+        const email = localStorage.getItem("email");
 
-  if (!email) {
-    console.log('Nenhum email armazenado no local storage.');
-  } else {
-    console.log('Email armazenado no local storage: ' + email);
-  }
-}
-    }
-  }
+        if (!email) {
+          console.log("Nenhum email armazenado no local storage.");
+        } else {
+          console.log("Email armazenado no local storage: " + email);
+        }
+      }
+    },
+  },
 };
-
-  </script>
-  
+</script>

@@ -1,27 +1,32 @@
 <template>
- 
   <div id="app">
+  
     <div class="custom-alert" v-if="showAlert">
       <div class="custom-alert-content">
         {{ alertMessage }}
         <button class="custom-alert-button" @click="closeAlert">OK</button>
       </div>
     </div>
-  
-    <nav v-if="$route.path!=='/login' && this.$route.path !== '/cadastro'">
+
+    <nav v-if="$route.path !== '/login' && this.$route.path !== '/cadastro'">
       <div class="nav-content">
         <div class="nav-links">
           <router-link to="/">Home</router-link> |
-          <router-link :to="'/perfil/' +  userDisplayName + '/' + userDisplayUserLocal">Perfil</router-link> |
+          <router-link
+            :to="'/perfil/' + userDisplayName + '/' + userDisplayUserLocal"
+            >Perfil</router-link
+          >
+          |
           <router-link to="/usuarios">Usuários</router-link>
         </div>
         <div class="div-btn-sair">
           <v-btn class="logout-button" @click="sair">Sair</v-btn>
-
         </div>
       </div>
     </nav>
+    
     <router-view />
+    <LoadingComponent v-if="isLoading" :loadingText="loadingText" />
   </div>
 </template>
 
@@ -31,7 +36,6 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #05080b;
-  
 }
 
 nav {
@@ -51,7 +55,7 @@ nav {
     font-weight: bold;
     color: #0b1724;
     text-decoration: none;
-    margin-right: 15px; /* Espaçamento entre links */
+    margin-right: 15px; 
   }
   .router-link-exact-active {
     color: #ffffff;
@@ -59,13 +63,13 @@ nav {
 }
 
 .logout-button {
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
 
-
 .router-view {
-  position: relative; /* Garante que o conteúdo principal não seja coberto pelo alerta */
-  z-index: 1; /* Defina um valor de z-index menor para o conteúdo principal */
+  position: relative; 
+  z-index: 1; 
 }
 
 .custom-alert {
@@ -99,40 +103,42 @@ nav {
   margin-top: 10px;
 }
 </style>
-
-
 <script>
+import LoadingComponent from "@/components/LoadingComponent.vue";
 
 export default {
- 
+  components: {
+    LoadingComponent
+  },
   data() {
     return {
       showAlert: false,
-      alertMessage: '',
-    
-users: [
+      alertMessage: "",
+      isLoading: true, 
+      loadingText: 'Aguarde...',
+      users: [
         {
           id: 0,
-          name: 'Maria Luiza',
-          user: '@Malu10',
+          name: "Maria Luiza",
+          user: "@Malu10",
           privado: false,
         },
         {
           id: 1,
-          name: 'Vitor Gabriel',
-          user: '@vt10',
+          name: "Vitor Gabriel",
+          user: "@vt10",
           privado: false,
         },
         {
           id: 2,
-          name: 'Pedro Lins',
-          user: '@pedro200',
+          name: "Pedro Lins",
+          user: "@pedro200",
           privado: true,
         },
         {
           id: 5,
-          name: 'Sergio Henrique',
-          user: '@sh22',
+          name: "Sergio Henrique",
+          user: "@sh22",
           privado: false,
         },
       ],
@@ -140,31 +146,42 @@ users: [
   },
   beforeCreate() {
     this.$store.dispatch("fetchUser");
+
+     /* eslint-disable no-unused-vars */
+    this.$router.beforeEach((to, from, next) => {
+      this.startLoading();
+      next();
+    });
+
+    this.$router.afterEach((to, from) => {
+      this.stopLoading();
+    });
+    /* eslint-enable no-unused-vars */
   },
   created() {
-  // Busque os dados do perfil com base nos parâmetros da rota
-  this.profileName = this.$route.params.userName;
-  this.profileUser = this.$route.params.userNick;
-  this.profileImage = this.getUserProfileImage(this.profileUser);
-},
+    this.profileName = this.$route.params.userName;
+    this.profileUser = this.$route.params.userNick;
+    
+  
+  },
   computed: {
     userDisplayName() {
-      const name = localStorage.getItem('nome');
-      const email =localStorage.getItem('email');
-      return name || (email ? email.slice(0, email.indexOf('@')) : null);
+      const name = localStorage.getItem("nome");
+      const email = localStorage.getItem("email");
+      return name || (email ? email.slice(0, email.indexOf("@")) : null);
     },
     userDisplayUserLocal() {
-      const user = localStorage.getItem('userlocal');
-      const email =localStorage.getItem('email');
-      return user || ( '@' + email.slice(0, email.indexOf('@')));
-
+      const user = localStorage.getItem("userlocal");
+      const email = localStorage.getItem("email");
+      return user || "@" + email.slice(0, email.indexOf("@"));
     },
   },
   methods: {
     sair() {
+      this.startLoading();
       this.$store.dispatch("logout").then(() => {
         localStorage.clear();
-        this.openAlert('Você foi desconectado com sucesso!');
+        this.openAlert("Você foi desconectado com sucesso!");
       });
     },
     openAlert(message) {
@@ -174,16 +191,12 @@ users: [
     closeAlert() {
       this.showAlert = false;
     },
+    startLoading() {
+      this.isLoading = true;
+    },
+    stopLoading() {
+      this.isLoading = false;
+    },
   },
-  props: {
-    message: {
-      type: Object,
-      required: true,
-    },
-    index: {
-      type: Number,
-      required: true,
-    },
-   
-  },};
+};
 </script>
