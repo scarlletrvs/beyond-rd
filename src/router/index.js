@@ -50,6 +50,17 @@ const routes = [
       requiresAuth: true,
     },
   },
+
+  {
+    name: "configurações",
+    path: "/configuracoes",
+
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/ConfiguracoesUser.vue"),
+    meta: {
+      requiresAuth: true,
+    },
+  },
 ];
 
 const router = new VueRouter({
@@ -60,10 +71,12 @@ const router = new VueRouter({
 router.beforeEach((to, from, next) => {
   auth.onAuthStateChanged((user) => {
     if (to.path === "/login" && user) {
+      console.log('authregister',auth.currentUser); 
      
       return;
     }
     if (to.path === "/cadastro" && user) {
+      console.log('authregister',auth.currentUser); 
      
       return;
     }

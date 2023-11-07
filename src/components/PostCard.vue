@@ -77,49 +77,74 @@
         @click="openDialog()"
         v-if="message.user === userDisplayUserLocal"
         class="v-btn1"
-        >Editar</v-btn
+        icon
       >
+        <v-icon> mdi-pencil </v-icon>
+      </v-btn>
+
       <v-btn
         @click="deleteMessages(message.id)"
         v-if="message.user === userDisplayUserLocal"
         class="v-btn2"
-        >Excluir</v-btn
+        icon
       >
+        <v-icon> mdi-delete </v-icon>
+      </v-btn>
     </v-row>
+
     <v-row justify="center">
-      <v-dialog v-model="dialog" persistent>
-        <v-card>
-          <v-card-title>
-            <span class="text-h5">Edite sua postagem</span>
-          </v-card-title>
-          <v-card-text>
-            <v-text-field
-              v-model="formData.NovoTextInput"
-              label="Digite nova postagem"
-              required
-            ></v-text-field>
+      <v-dialog v-model="dialog" persistent content-class="my-dialog-content">
+        <div class="post">
+          <div class="profiles">
+            <p class="profilename-dialog">Edite sua postagem</p>
+          </div>
+
+          <v-text-field
+            v-model="formData.NovoTextInput"
+            solo
+            hide-details="faça uma postagem!"
+            placeholder="Digite aqui sua postagem!"
+            class="text-field"
+            :style="{ border: 'none' }"
+          ></v-text-field>
+
+          <div class="image-button-dialog">
             <v-file-input
+              label="adicione uma foto"
+              accept="image/png, image/jpeg, image/bmp"
+              hide-input
+              truncate-length="20"
               v-model="formData.editingImage"
-              label="Editar imagem"
-              accept="image/*"
+              @change="onImageChange"
+              :prepend-icon="'mdi-camera'"
+              class="custom-file-input-dialog"
             ></v-file-input>
-          </v-card-text>
-          <v-btn color="blue darken-1" text @click="closeDialog(message)"
-            >Close</v-btn
-          >
-          <v-btn
-            color="blue darken-1"
-            text
-            @click="
-              editMessages(
-                message.id,
-                formData.NovoTextInput,
-                formData.editingImage
-              )
-            "
-            >Save</v-btn
-          >
-        </v-card>
+
+            <v-btn
+             
+              @click="closeDialog(message)"
+              style="color: red !important; margin-right: 5px"
+              class="btn-postar-dialog"
+            >
+              Fechar
+            </v-btn>
+
+            <v-btn
+              style="color: blue !important"
+          
+              @click="
+                editMessages(
+                  message.id,
+                  formData.NovoTextInput,
+                  formData.editingImage
+                )
+              "
+              class="btn-postar-dialog"
+            >
+              Salvar
+            </v-btn>
+          </div>
+        </div>
       </v-dialog>
     </v-row>
   </v-card>
@@ -245,6 +270,13 @@ export default {
       this.formData.NovoTextInput = "";
       this.dialog = false;
     },
+    onImageChange(event) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+     
+      this.$emit('imageChange', selectedFile);
+    }
+  },
   },
   created() {
     this.updateProfile();
@@ -278,8 +310,6 @@ export default {
   flex-direction: column;
   background-color: pink !important;
   padding-top: 1.5px;
-
- 
 }
 
 .card-subtitle {
@@ -308,7 +338,7 @@ export default {
 .v-row {
   display: flex;
   flex-direction: row;
-  gap: 10px;
+  gap: 0px;
   justify-content: flex-end;
   margin-left: 1px;
   padding-bottom: 20px;
@@ -317,16 +347,56 @@ export default {
 }
 
 .v-btn1 {
-  width: 20%;
+  width: 4% !important;
   height: 90%;
+  color: blue !important;
+  font-size: small;
 }
 
 .v-btn2 {
-  width: 20%;
-  height: 90%;
+  width: 4% !important;
+  height: auto !important;
+  color: red !important;
+  font-size: small;
 }
 
 .v-dialog {
-  max-width: 600px;
+  max-width: 70%;
+  height: auto;
+}
+.profilename-dialog {
+  font-family: Avenir, Helvetica, Arial, sans-serif;
+  color: black;
+  font-weight: 400;
+  font-size: medium;
+  text-align: start;
+}
+.image-button-dialog {
+  flex-direction: row;
+  display: flex;
+  width: 100%;
+  margin-top: 0.4rem;
+  align-self: flex-end;
+  justify-content: space-around;
+  padding-left: 2.5%;
+  padding-right: 2%;
+}
+.custom-file-input-dialog {
+  margin-top: -0.6rem;
+  flex-grow: 1;
+}
+.custom-file-input-dialog .v-icon {
+  color: white;
+  font-size: 2.6rem;
+  transition: color 0.3s;
+}
+.btn-postar-dialog {
+  width: 15% !important;
+  height: auto;
+  border: 2px solid #938a8a;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-weight: bold;
+  margin-bottom: 0.8rem;
 }
 </style>

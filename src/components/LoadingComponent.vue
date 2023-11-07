@@ -25,15 +25,19 @@
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 .loading-text {
   margin-top: 10px;
   font-weight: bold;
-  color: #fff; 
-  font-size: 20px; 
+  color: #fff;
+  font-size: 20px;
 }
 </style>
 
@@ -42,7 +46,7 @@ export default {
   props: {
     loadingText: {
       type: String,
-      default: 'Carregando...',
+      default: "Carregando...",
     },
   },
 };

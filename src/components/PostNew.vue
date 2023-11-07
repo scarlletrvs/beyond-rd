@@ -175,10 +175,6 @@ export default {
       type: String,
       required: true,
     },
-    text: {
-      type: Object,
-      required: true,
-    },
 
     img: {
       type: String,

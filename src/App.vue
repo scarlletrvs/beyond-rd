@@ -7,23 +7,39 @@
         <button class="custom-alert-button" @click="closeAlert">OK</button>
       </div>
     </div>
-
+    <link href="https://cdn.materialdesignicons.com/5.6.55/css/materialdesignicons.min.css" rel="stylesheet">
     <nav v-if="$route.path !== '/login' && this.$route.path !== '/cadastro'">
       <div class="nav-content">
         <div class="nav-links">
-          <router-link to="/">Home</router-link> |
-          <router-link
-            :to="'/perfil/' + userDisplayName + '/' + userDisplayUserLocal"
-            >Perfil</router-link
-          >
-          |
-          <router-link to="/usuarios">Usuários</router-link>
+          <router-link :to="{ path: '/' }">
+            <i id="i" class="mdi mdi-home"></i>
+            <span class="hide-text-on-small-screen">Home</span>
+          </router-link> |
+
+          <router-link :to="'/perfil/' + userDisplayName + '/' + userDisplayUserLocal">
+            <i id="i" class="mdi mdi-account"></i>
+            <span class="hide-text-on-small-screen">Perfil</span>
+          </router-link> |
+
+          <router-link :to="{ path: '/usuarios' }">
+            <i  id="i" class="mdi mdi-account-group"></i>
+            <span class="hide-text-on-small-screen">Usuários</span>
+          </router-link> |
+
+          <router-link :to="{ path: '/configuracoes' }">
+            <i id="i" class="mdi mdi-cog"></i>
+            <span class="hide-text-on-small-screen">Configurações</span>
+          </router-link>
         </div>
         <div class="div-btn-sair">
-          <v-btn class="logout-button" @click="sair">Sair</v-btn>
-        </div>
+  <v-btn class="logout-button" @click="sair">
+    <i style="font-size: 19px;" class="mdi mdi-logout"></i>
+    <span class="hide-text-on-small-screen-sair">Sair</span>
+  </v-btn>
+</div>
       </div>
     </nav>
+
     
     <router-view />
     <LoadingComponent v-if="isLoading" :loadingText="loadingText" />
@@ -65,6 +81,8 @@ nav {
 .logout-button {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+    font-size: small;
+   
 }
 
 .router-view {
@@ -101,6 +119,35 @@ nav {
   border-radius: 5px;
   cursor: pointer;
   margin-top: 10px;
+}
+
+
+@media (min-width : 450px) and (max-width: 650px){
+  .hide-text-on-small-screen {
+    display: none;
+  }
+  #i{
+    font-size: 22px;
+  }
+
+}
+@media (min-width : 0px) and (max-width: 450px){
+  .hide-text-on-small-screen-sair {
+    display: none;
+  }
+  .hide-text-on-small-screen {
+    display: none;
+  }
+  #i{
+    font-size: 22px;
+  }
+  .logout-button{
+    .span{
+      font-size: 13px;
+    }
+  }
+ 
+
 }
 </style>
 <script>
@@ -173,7 +220,7 @@ export default {
     userDisplayUserLocal() {
       const user = localStorage.getItem("userlocal");
       const email = localStorage.getItem("email");
-      return user || "@" + email.slice(0, email.indexOf("@"));
+      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
     },
   },
   methods: {

@@ -5,7 +5,7 @@
         :message="message"
         @deleteAllMessages="deleteAllMessages($event)"
       />
-      <BarraPesquisa @search-posts="performSearch"  :search="search" />
+      <BarraPesquisa @search-posts="performSearch" :search="search" />
       <div style="margin-top: 3px">
         <PostNew
           :profileName="userDisplayName"
@@ -37,21 +37,6 @@
   </v-app>
 </template>
 
-<style>
-.post-card-container {
-  display: flex;
-  justify-content: center;
-  flex-direction: column;
-  align-items: center;
-  margin: 1% auto;
-  width: 100%;
-}
-
-.postagens {
-  margin: 0.4% auto;
-}
-</style>
-
 <script>
 import { format } from "date-fns";
 
@@ -60,7 +45,7 @@ import BarraMenu from "@/components/BarraMenu.vue";
 import PostNew from "@/components/PostNew.vue";
 import BarraPesquisa from "@/components/BarraPesquisa.vue";
 import ButtomScrollToTop from "@/components/ButtomScrollToTop.vue";
-
+import { onAuthStateChanged, getAuth } from "firebase/auth";
 export default {
   components: {
     PostCard,
@@ -68,7 +53,6 @@ export default {
     PostNew,
     BarraPesquisa,
     ButtomScrollToTop,
-
   },
   name: "APP",
   data() {
@@ -79,7 +63,7 @@ export default {
       imageInput: null,
       editingImage: null,
       search: "",
-      img: '',
+      img: "",
       users: [
         {
           id: 0,
@@ -194,16 +178,16 @@ export default {
     userDisplayUserLocal() {
       const user = localStorage.getItem("userlocal");
       const email = localStorage.getItem("email");
-      return user || "@" + email.slice(0, email.indexOf("@"));
-    },
-    userDisplayUser() {
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
-      return user || "@" + email.slice(0, email.indexOf("@"));
+      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
     },
     userDisplayImage() {
       const image = localStorage.getItem("userimage");
       return image || this.defaultUserProfileImage;
+    },
+    userDisplayUser() {
+      const user = localStorage.getItem("userlocal");
+      const email = localStorage.getItem("email");
+      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
     },
 
     checkInput() {
@@ -213,20 +197,36 @@ export default {
     },
 
     filteredMessages() {
-    if (this.search) {
-      const searchTerm = this.search.toLowerCase();
-      return this.messages.filter((message) => {
-        return (
-          (message.text.toLowerCase().includes(searchTerm) ||
-            message.user.toLowerCase().includes(searchTerm) ||
-            message.name.toLowerCase().includes(searchTerm)) &&
-          !message.privado 
-        );
-      });
-    } else {
-      return this.messages.filter((message) => !message.privado); 
-    }
+      if (this.search) {
+        const searchTerm = this.search.toLowerCase();
+        return this.messages.filter((message) => {
+          return (
+            (message.text.toLowerCase().includes(searchTerm) ||
+              message.user.toLowerCase().includes(searchTerm) ||
+              message.name.toLowerCase().includes(searchTerm)) &&
+            !message.privado
+          );
+        });
+      } else {
+        return this.messages.filter((message) => !message.privado);
+      }
+    },
   },
+  created() {
+    const auth = getAuth();
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        console.log("Dados do currentUser:", user);
+        // Exibir os dados do currentUser no console
+        console.log("Nome do usuário:", user.displayName);
+        console.log("Email do usuário:", user.email);
+        console.log("UID do usuário:", user.uid);
+        // Você pode adicionar mais propriedades aqui, se necessário
+      } else {
+        console.log("Nenhum usuário autenticado.");
+      }
+    });
   },
   methods: {
     associateProfileImageToMessage() {
@@ -274,7 +274,6 @@ export default {
       this.search = term;
     },
 
-
     deleteMessages(id) {
       this.messages = this.messages.filter((message) => message.id !== id);
     },
@@ -294,8 +293,6 @@ export default {
         this.imageInput = selectedFile;
       }
     },
-   
-
   },
   props: {
     message: {
@@ -306,3 +303,18 @@ export default {
   mounted() {},
 };
 </script>
+
+<style>
+.post-card-container {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin: 1% auto;
+  width: 100%;
+}
+
+.postagens {
+  margin: 0.4% auto;
+}
+</style>

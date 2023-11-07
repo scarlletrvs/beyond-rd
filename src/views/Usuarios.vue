@@ -37,21 +37,6 @@
   </v-app>
 </template>
 
-<style>
-.user-list {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin-bottom: 0.5rem;
-}
-
-.user-item {
-  background-color: rgb(148, 20, 114);
-  list-style-type: none;
-  margin-bottom: 0.5rem;
-}
-</style>
-
 <script>
 import BarraPesquisa from "@/components/BarraPesquisa.vue";
 
@@ -148,3 +133,18 @@ export default {
   },
 };
 </script>
+
+<style>
+.user-list {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  margin-bottom: 0.5rem;
+}
+
+.user-item {
+  background-color: rgb(148, 20, 114);
+  list-style-type: none;
+  margin-bottom: 0.5rem;
+}
+</style>

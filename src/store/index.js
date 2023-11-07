@@ -7,16 +7,23 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { auth } from "../config/index.js";
 import router from "../router/index.js";
+import { sendEmailVerification } from "firebase/auth";
 
-function camposPreenchidos(name, user, email, password, repetirSenha) {
+
+function camposPreenchidos(name, user, email, password, repetirSenha, telefone, dataNasc) {
   return (
     name !== "" &&
     user !== "" &&
     email !== "" &&
     password !== "" &&
-    repetirSenha !== ""
+    repetirSenha !== "" &&
+    telefone !== "" &&
+    dataNasc !== "" 
   );
 }
+
+
+
 
 // function validarNome(name) {
 //   console.log(typeof name)
@@ -93,6 +100,7 @@ const store = new Vuex.Store({
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
+        console.log('authregister', auth.currentUser);
       } catch (error) {
         if (error.code === "auth/invalid-login-credentials") {
           alert("As credenciais email e senha estão incorretas!");
@@ -100,68 +108,90 @@ const store = new Vuex.Store({
           alert(error.message);
         }
         return;
-      }
+      }   
 
       commit("SET_USER", auth.currentUser);
     },
 
     async register({ commit }, details) {
-      if (
-        !camposPreenchidos(
-          details.name,
-          details.user,
-          details.email,
-          details.password,
-          details.repetirSenha
-        )
-      ) {
+      if (!camposPreenchidos(
+        details.name,
+        details.user,
+        details.email,
+        details.password,
+        details.repetirSenha,
+        details.telefone,
+        details.dataNasc
+      )) {
         console.log(
           details.name,
           details.user,
           details.email,
           details.password,
-          details.repetirSenha
+          details.repetirSenha,
+          details.telefone,
+          details.dataNasc
         );
         alert("Preencha todos os campos corretamente!");
         return;
       }
-
-      // if (!validarNome(details.nome)) {
-      //   alert('Preencha o campo nome corretamente!');
-      //   return;
-      // }
-
+    
       if (!validarEmail(details.email)) {
-        alert("Preencha um email válido!");
+        alert("Preencha um e-mail válido!");
         return;
       }
-
+    
       if (!validarSenha(details.password)) {
         alert("A senha deve ter no mínimo 8 caracteres!");
         return;
       }
-
+    
       if (details.password !== details.repetirSenha) {
         alert("As senhas não coincidem!");
         return;
       }
-
+    
       try {
         const email = details.email;
         const password = details.password;
-
+    
+       
         await createUserWithEmailAndPassword(auth, email, password);
-        commit("SET_USER", auth.currentUser);
-        alert("Usuário cadastrado com sucesso!");
-
-        router.push({ name: "home" });
+    
+        const user = auth.currentUser;
+    
+        await sendEmailVerification(user);
+    
+        alert("Um e-mail de verificação foi enviado para o seu endereço de e-mail. Verifique seu e-mail antes de fazer login.");
+    
+        const checkInterval = 30 * 1000; 
+        let elapsed = 0;
+        
+        const checkEmailVerified = async () => {
+          const user = auth.currentUser;
+          if (user && user.emailVerified) {
+            clearInterval(interval); 
+            console.log('Email verificado com sucesso!');
+            
+            commit("reset");
+          }
+          
+          elapsed += 1000; 
+          
+          if (elapsed >= checkInterval) {
+            clearInterval(interval);
+            console.log('Tempo esgotado. Email não verificado.');
+           
+          }
+        };
+      
+        const interval = setInterval(checkEmailVerified, 1000); 
       } catch (error) {
         alert("Email já cadastrado, tente outro!");
         console.log(error.message);
-      } finally {
-        commit("reset");
       }
     },
+    
     async logout({ commit }) {
       await signOut(auth);
 

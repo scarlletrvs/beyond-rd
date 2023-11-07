@@ -8,7 +8,9 @@
       <BarraPesquisa @search-posts="performSearch" />
       <div class="perfil-postnew">
         <div class="div-imagem-profilename">
-          <div class="img-div"><v-img class="imgprofile" :src="profileImageUser"></v-img></div>
+          <div class="img-div">
+            <v-img class="imgprofile" :src="profileImageUser"></v-img>
+          </div>
 
           <h1 class="profile-name">
             {{ profileName }}
@@ -47,672 +49,6 @@
   </v-app>
 </template>
 
-<style>
-.postagens {
-  margin-left: 1% ;
-  margin-top: 1.3%;
-
- width: 100%;
-}
-.imgprofile {
-  width: 180px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 2px solid black;
-  margin-top: -5px;
-}
-.divPostNew {
-  width: 100%;
-  height: 100%;
-
-}
-.profile-name {
-  font-size: 3.5rem;
-  color: black;
-  font-size: medium;
-  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
-    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-}
-.div-imagem-profilename {
-  width: 15%;
-  flex-direction: column;
-  gap: 2px;
-  margin-top: 1%;
-  margin-bottom: 0.5%;
-  display: flex;
-  align-items: center;
-}
-.perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  justify-content: center;
-  display: flex;
-}
-
-@media (min-width: 1721px) and (max-width:2000px ) {
-  .div-imagem-profilename {
-    width: 15%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 180px;
-    height: 180px;
-  }
-  .divPostNew{
-    width:100%;
-    margin-left: -px;
-    margin-top: 11px;
-  }
-
-}
-
-
-@media (min-width: 1200px) and (max-width:1721px ) {
-  .div-imagem-profilename {
-    width: 20%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 165px;
-    height: 165px;
-  }
-  .divPostNew{
-    width:90%;
-    margin-left: -px;
-    margin-top: 7px;
-  }
-
-}
-
-@media (min-width: 950px) and (max-width:1200px ) {
-  .div-imagem-profilename {
-    width: 27%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 160px;
-    height: 160px;
-  }
-
-}
-
-
-
-@media (min-width: 770px) and (max-width:950px ) {
-  .div-imagem-profilename {
-    width: 27%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 150px;
-    height: 150px;
-  }
-
-}
-@media (min-width: 650px) and (max-width:770px ) {
-  .div-imagem-profilename {
-    width: 32%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 145px;
-    height: 145px;
-  }
-
-
-}
-@media (min-width: 570px) and (max-width:650px ) {
-  .div-imagem-profilename {
-    width: 36%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 90%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width: 140px;
-    height: 140px;
-  }
-
-}
-
-@media (min-width: 490px) and (max-width:570px ) {
-  .div-imagem-profilename {
-    width: 36%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 80%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width:140px;
-    height: 140px;
-
-  }
-  img-div{
-    width: 80%;
-    height: 80%;
-  
-  }
-
-}
-@media (min-width: 430px) and (max-width:490px ) {
-  .div-imagem-profilename {
-    width: 36%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 80%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width:130px;
-    height: 130px;
-
-  }
-  img-div{
-    width: 70%;
-    height: 70%;
-    padding-top: 10px;
-  }
-  .profile-name{
-    font-size: 14px;
-    margin-top: 10px;
-  }
-
-}
-@media (min-width: 395px) and (max-width:430px ) {
-  .div-imagem-profilename {
-    width: 36%;
-    padding-top: 5px;
-  }
- 
-  .divPostNew {
-    width: 80%;
-    margin-left: 3px;
-  }
-  .imgprofile{
-    width:120px;
-    height: 120px;
-
-  }
-  img-div{
-    width: 70%;
-    height: 70%;
-    padding-top: 10px;
-  }
-  .profile-name{
-    font-size: 14px;
-    margin-top: 10px;
-  }
-
-}
-
-
-@media (min-width: 380px) and (max-width:395px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:65px;
-    height: 65px;
-    margin-left: 490%;
-    margin-top: 1px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-
-@media (min-width: 364px) and (max-width:380px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:60px;
-    height: 60px;
-    margin-left: 525%;
-    margin-top: 6px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-@media (min-width: 346px) and (max-width:364px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:60px;
-    height: 60px;
-    margin-left: 495%;
-    margin-top: 7px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 339px) and (max-width:346px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:58px;
-    height: 58px;
-    margin-left: 502%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 320px) and (max-width:339px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 495%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 315px) and (max-width:320px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 478%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 305px) and (max-width:315px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 465%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 297px) and (max-width:305px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 455%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-
-@media (min-width: 290px) and (max-width:297px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 440%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-@media (min-width: 273px) and (max-width:290px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 413%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-
-@media (min-width: 265px) and (max-width:273px ) {
-  .div-imagem-profilename {
-    width: 0%;
-    padding-top: 5px;
-    flex-direction:column;
-    gap: 10px;
-    padding-left: 10px;
-  }
- 
-  .divPostNew {
-    width: 100%;
-    margin-left: 3px;
-    margin-left: -20px;
-  }
-  .imgprofile{
-    width:55px;
-    height: 55px;
-    margin-left: 400%;
-    margin-top: 4px;
-
-  }
- 
-  .profile-name{
-    font-size: 0px;
-    margin-top: 14px;
-  }
-  .perfil-postnew {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  
-  background-color: #f9e1df;
-  border: 1px solid grey;
-  margin-top: 0.3rem;
-  gap: 5px;}
-
-}
-
-
-
-
-
-
-
-
-
-</style>
 
 <script>
 import PostCard from "@/components/PostCard.vue";
@@ -853,7 +189,7 @@ export default {
     userDisplayUser() {
       const user = localStorage.getItem("userlocal");
       const email = localStorage.getItem("email");
-      return user || "@" + email.slice(0, email.indexOf("@"));
+      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
     },
     userDisplayName() {
       const name = localStorage.getItem("nome");
@@ -863,7 +199,7 @@ export default {
     userDisplayUserLocal() {
       const user = localStorage.getItem("userlocal");
       const email = localStorage.getItem("email");
-      return user || "@" + email.slice(0, email.indexOf("@"));
+      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
     },
     userDisplayImage() {
       const image = localStorage.getItem("photoURL");
@@ -1000,3 +336,630 @@ export default {
   },
 };
 </script>
+
+
+<style>
+.postagens {
+  margin-left: 1%;
+  margin-top: 1.3%;
+
+  width: 100%;
+}
+.imgprofile {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid black;
+  margin-top: -5px;
+}
+.divPostNew {
+  width: 100%;
+  height: 100%;
+}
+.profile-name {
+  font-size: 3.5rem;
+  color: black;
+  font-size: medium;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+}
+.div-imagem-profilename {
+  width: 15%;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 1%;
+  margin-bottom: 0.5%;
+  display: flex;
+  align-items: center;
+}
+.perfil-postnew {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  background-color: #f9e1df;
+  border: 1px solid grey;
+  margin-top: 0.3rem;
+  justify-content: center;
+  display: flex;
+}
+
+@media (min-width: 1721px) and (max-width: 2000px) {
+  .div-imagem-profilename {
+    width: 15%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 180px;
+    height: 180px;
+  }
+  .divPostNew {
+    width: 100%;
+    margin-left: -px;
+    margin-top: 11px;
+  }
+}
+
+@media (min-width: 1200px) and (max-width: 1721px) {
+  .div-imagem-profilename {
+    width: 20%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 165px;
+    height: 165px;
+  }
+  .divPostNew {
+    width: 90%;
+    margin-left: -px;
+    margin-top: 7px;
+  }
+}
+
+@media (min-width: 950px) and (max-width: 1200px) {
+  .div-imagem-profilename {
+    width: 27%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 160px;
+    height: 160px;
+  }
+}
+
+@media (min-width: 770px) and (max-width: 950px) {
+  .div-imagem-profilename {
+    width: 27%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 150px;
+    height: 150px;
+  }
+}
+@media (min-width: 650px) and (max-width: 770px) {
+  .div-imagem-profilename {
+    width: 32%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 145px;
+    height: 145px;
+  }
+}
+@media (min-width: 570px) and (max-width: 650px) {
+  .div-imagem-profilename {
+    width: 36%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 90%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 140px;
+    height: 140px;
+  }
+}
+
+@media (min-width: 490px) and (max-width: 570px) {
+  .div-imagem-profilename {
+    width: 36%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 80%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 140px;
+    height: 140px;
+  }
+  img-div {
+    width: 80%;
+    height: 80%;
+  }
+}
+@media (min-width: 430px) and (max-width: 490px) {
+  .div-imagem-profilename {
+    width: 36%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 80%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 130px;
+    height: 130px;
+  }
+  img-div {
+    width: 70%;
+    height: 70%;
+    padding-top: 10px;
+  }
+  .profile-name {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+}
+@media (min-width: 395px) and (max-width: 430px) {
+  .div-imagem-profilename {
+    width: 36%;
+    padding-top: 5px;
+  }
+
+  .divPostNew {
+    width: 80%;
+    margin-left: 3px;
+  }
+  .imgprofile {
+    width: 120px;
+    height: 120px;
+  }
+  img-div {
+    width: 70%;
+    height: 70%;
+    padding-top: 10px;
+  }
+  .profile-name {
+    font-size: 14px;
+    margin-top: 10px;
+  }
+}
+
+@media (min-width: 380px) and (max-width: 395px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 65px;
+    height: 65px;
+    margin-left: 490%;
+    margin-top: 1px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 364px) and (max-width: 380px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 60px;
+    height: 60px;
+    margin-left: 525%;
+    margin-top: 6px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+@media (min-width: 346px) and (max-width: 364px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 60px;
+    height: 60px;
+    margin-left: 495%;
+    margin-top: 7px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 339px) and (max-width: 346px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 58px;
+    height: 58px;
+    margin-left: 502%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 320px) and (max-width: 339px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 495%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 315px) and (max-width: 320px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 478%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 305px) and (max-width: 315px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 465%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 297px) and (max-width: 305px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 455%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 290px) and (max-width: 297px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 440%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 273px) and (max-width: 290px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 413%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+
+@media (min-width: 265px) and (max-width: 273px) {
+  .div-imagem-profilename {
+    width: 0%;
+    padding-top: 5px;
+    flex-direction: column;
+    gap: 10px;
+    padding-left: 10px;
+  }
+
+  .divPostNew {
+    width: 100%;
+    margin-left: 3px;
+    margin-left: -20px;
+  }
+  .imgprofile {
+    width: 55px;
+    height: 55px;
+    margin-left: 400%;
+    margin-top: 4px;
+  }
+
+  .profile-name {
+    font-size: 0px;
+    margin-top: 14px;
+  }
+  .perfil-postnew {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+
+    background-color: #f9e1df;
+    border: 1px solid grey;
+    margin-top: 0.3rem;
+    gap: 5px;
+  }
+}
+</style>
+
