@@ -5,10 +5,8 @@
       <input v-model="newEmail" type="text" placeholder="Novo Email" />
       <div class="modal-buttons">
         <v-btn @click="closeModal">Cancelar</v-btn>
-        <v-btn @click="sendEmailVerification"
-          >Enviar Email de Verificação</v-btn
-        >
-        <v-btn @click="updateEmail" v-if="isVerified">Salvar</v-btn>
+        <v-btn @click="sendEmailVerification">Enviar Email de Verificação</v-btn>
+        <v-btn @click="updateEmail">Salvar</v-btn>
       </div>
     </div>
   </div>
@@ -22,6 +20,7 @@ export default {
   data() {
     return {
       isVerified: false,
+      newEmail: "",
     };
   },
   methods: {
@@ -29,12 +28,20 @@ export default {
       this.$emit("close");
     },
     async sendEmailVerification() {
-      const auth = getAuth();
-
       try {
-        await sendEmailVerification(auth.currentUser);
-        this.isVerified = true; // Marcar o e-mail como verificado
-        console.log("Email de verificação enviado com sucesso!");
+        const auth = getAuth();
+        
+        if (this.newEmail) {
+          await sendEmailVerification(auth.currentUser, {
+            requestType: "VERIFY_EMAIL",
+            newEmail: this.newEmail,
+          });
+
+          console.log("Email de verificação enviado com sucesso!");
+          this.isVerified = true;
+        } else {
+          console.error("O novo email não é válido.");
+        }
       } catch (error) {
         console.error("Erro ao enviar o email de verificação:", error);
       }
@@ -42,34 +49,24 @@ export default {
     async updateEmail() {
       if (this.isVerified) {
         const auth = getAuth();
+        const user = auth.currentUser;
 
         try {
-          await updateEmail(auth.currentUser, this.newEmail);
+          await updateEmail(user, this.newEmail);
+
           this.closeModal();
           console.log("Email atualizado com sucesso!");
+          console.log(this.newEmail);
+          console.log(auth.currentUser);
+
+          this.$emit("updateEmail", this.newEmail);
         } catch (error) {
           console.error("Erro ao atualizar o email:", error);
         }
+      } else {
+        console.error("Você deve verificar o novo email primeiro.");
       }
     },
   },
 };
 </script>
-
-<style scoped>
-.email-modal {
-  width: 70%;
-  height: auto;
-}
-.modal-content {
-  flex-direction: column;
-  gap: 10px;
-  padding: 10px auto;
-}
-input {
-  width: 100%;
-}
-.modal-buttons {
-  width: 20%;
-}
-</style>

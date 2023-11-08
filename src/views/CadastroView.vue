@@ -74,7 +74,7 @@
               type="file"
               @change="processImage"
               id="imagem"
-              class="input-field"
+              class="input-field-imagem"
             />
           </div>
           <div class="form-group">
@@ -83,7 +83,7 @@
               v-model="user.dataNasc"
               type="date"
               id="dataNasc"
-              class="input-field"
+              class="input-field-dataNasc"
             />
           </div>
         </div>
@@ -153,7 +153,7 @@ export default {
       this.$store.dispatch("loadUsers");
 
       await this.$store.dispatch("register", this.user);
-      if (this.$auth.isLoggedIn()) {
+      if (this.auth.isLoggedIn()) {
         const email = localStorage.getItem("email");
 
         if (!email) {
@@ -164,16 +164,12 @@ export default {
       }
     },
     calculateAge(dateOfBirth, currentDate) {
-      // Calcula a diferença em milissegundos
       const diff = currentDate - dateOfBirth;
 
-      // Calcula a idade em milissegundos
       const idadeMilissegundos = diff;
 
-      // Converte a idade de milissegundos para anos
       const idadeAnos = idadeMilissegundos / (1000 * 60 * 60 * 24 * 365.25);
 
-      // Arredonda a idade para um número inteiro
       const idadeArredondada = Math.floor(idadeAnos);
 
       return idadeArredondada;
@@ -187,7 +183,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
-
+ height: 100vh !important;
   background-color: pink;
 }
 
@@ -261,12 +257,44 @@ label {
   border: 1px solid black;
   border-radius: 4px;
   background-color: aliceblue;
+  margin-top: -1.5px;
   color: black;
   font-size: 1.2rem;
   padding-left: 0.3rem;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
+.input-field-imagem{
+  width: 100%;
+  margin-top: -2px;
+  padding: 0.5rem;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: aliceblue;
+  color: black;
+  font-size: 1.2rem;
+  padding-left: 0.3rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+}
+
+.input-field-dataNasc{
+  width: 100%;
+  margin-top: -2px;
+
+  padding: 0.5rem;
+  border: 1px solid black;
+  border-radius: 4px;
+  background-color: aliceblue;
+  color: black;
+  font-size: 1.2rem;
+  padding-left: 0.3rem;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+
+}
+
 
 p {
   font-size: 1rem;
@@ -293,6 +321,11 @@ body {
 }
 
 @media (min-width: 800px) and (max-width: 870px) {
+  .page {
+  height: 100% !important;
+
+  background-color: pink;
+}
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -310,14 +343,19 @@ body {
 }
 
 @media (min-width: 700px) and (max-width: 912px) {
+  .page {
+  height: 100vh !important;
+  background-color: pink !important;
+}
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
     padding: 10px;
     display: flex;
     align-items: center;
-    width: 70%;
+    width:70%;
     height: auto;
+    margin-top: 4% ;
     border-radius: 40px;
     border: 2px solid white;
   }
@@ -327,6 +365,10 @@ body {
 }
 
 @media (min-width: 650px) and (max-width: 700px) {
+  .page {
+  height: 100vh !important;
+  background-color: pink !important;
+}
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -337,12 +379,17 @@ body {
     height: auto;
     border-radius: 40px;
     border: 2px solid white;
+    margin-top: 3%;
   }
   .page {
     height: 100%;
   }
 }
 @media (min-width: 600px) and (max-width: 650px) {
+  .page {
+  height: 100vh !important;
+  background-color: pink;
+}
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -353,20 +400,28 @@ body {
     height: auto;
     border-radius: 40px;
     border: 2px solid white;
+   
   }
 }
 
 @media (min-width: 530px) and (max-width: 600px) {
+
+  .page {
+  height: 100% !important;
+
+  background-color: pink;
+}
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
     padding: 10px;
     display: flex;
     align-items: center;
-    width: auto;
+    width: 90%;
     height: auto;
     border-radius: 40px;
     border: 2px solid white;
+    margin-top: 4%;
   }
   .label {
     font-size: 1rem;
@@ -382,19 +437,33 @@ body {
     font-size: 24px;
   }
   .page {
-    height: 100%;
+    height: 100vh !important;
   }
+
+  .form-column-right {
+  margin-left: 8.5%;
+  width: 50%;
+
+}
 }
 
 @media (min-width: 400px) and (max-width: 530px) {
+  .page {
+  height: 100% !important;
+
+  background-color: pink;
+}
+ 
+ 
+ 
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
     padding: 10px;
     display: flex;
     align-items: center;
-    width: 83%;
-    height: auto;
+    width: 73%;
+    height: 150%;
     border-radius: 40px;
     border: 2px solid white;
     margin-top: 15%;
@@ -450,7 +519,7 @@ body {
 
   .page {
     flex-direction: column;
-    height: 100%;
+    height: 100vh;
   }
   .save-button {
     width: 30%;
@@ -458,6 +527,11 @@ body {
 }
 
 @media (min-width: 280px) and (max-width: 400px) {
+
+  .page {
+    flex-direction: column;
+    height: 100vh;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);

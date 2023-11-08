@@ -77,8 +77,23 @@
         <div style="background-color: #f9e1df" class="dados">
           <div style="background-color: #f9e1df" class="info-row">
             <div style="background-color: #f9e1df" class="info-column">
+              <h2>Senha:</h2>
+              <p>********</p>
+            </div>
+            <div class="buttom-edit">
+              <v-btn class="btn-editar" @click="openPasswordModal">Editar</v-btn>
+            </div>
+          </div>
+        </div>
+
+        <ModalEditSenha v-if="showPasswordModal" @close="closePasswordModal"></ModalEditSenha>
+
+
+        <div class="dados">
+          <div class="info-row">
+            <div class="info-column">
               <h2>Telefone:</h2>
-              <p>{{ editingPhone ? editedPhone : user.phone }}</p>
+              <p>{{ editingPhone ? editedPhone : user.phone }} </p>
             </div>
             <div class="buttom-edit">
               <v-btn class="btn-editar" @click="toggleEdit('phone')"
@@ -88,9 +103,10 @@
           </div>
         </div>
 
-        <div class="dados">
-          <div class="info-row">
-            <div class="info-column">
+
+        <div style="background-color: #f9e1df" class="dados">
+          <div style="background-color: #f9e1df" class="info-row">
+            <div style="background-color: #f9e1df" class="info-column">
               <h2>Idade:</h2>
               <p>{{ editingAge ? editedAge : user.age }} anos</p>
             </div>
@@ -101,6 +117,7 @@
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </div>
@@ -111,16 +128,19 @@
 <script>
 import { auth } from "../config/index";
 import ModalEditarEmail from "../components/ModalEditarEmail.vue";
+import ModalEditSenha from "../components/ModalEditSenha.vue";
+
 export default {
   components: {
     ModalEditarEmail,
+    ModalEditSenha
   },
   data() {
     return {
       user: {
         name: localStorage.getItem("nome") || (localStorage.getItem("email") ?  localStorage.getItem("email").slice(0, localStorage.getItem("email").indexOf("@")): null),
         username: localStorage.getItem("userlocal") || (localStorage.getItem("email") ? ( '@' + localStorage.getItem("email").slice(0, localStorage.getItem("email").indexOf("@"))) : null),
-        email: localStorage.getItem("email"),
+        email: localStorage.getItem("newEmail") || localStorage.getItem("email"),
         phone: localStorage.getItem("telefone") ? localStorage.getItem("telefone") : "(**) *****-****",
         age: localStorage.getItem("idade") || "**",
         userProfileImage:
@@ -131,6 +151,7 @@ export default {
       editedEmail: "",
       showEmailModal: false,
       newEmail: "",
+      showPasswordModal: false,
     };
   },
   methods: {
@@ -148,6 +169,12 @@ export default {
       auth.currentUser.delete();
       alert("Conta Exluida com sucesso!")
     },
+    openPasswordModal() {
+    this.showPasswordModal = true;
+  },
+  closePasswordModal() {
+    this.showPasswordModal = false;
+  },
   },
 };
 </script>

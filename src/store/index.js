@@ -7,7 +7,6 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { auth } from "../config/index.js";
 import router from "../router/index.js";
-import { sendEmailVerification } from "firebase/auth";
 
 
 function camposPreenchidos(name, user, email, password, repetirSenha, telefone, dataNasc) {
@@ -22,7 +21,56 @@ function camposPreenchidos(name, user, email, password, repetirSenha, telefone, 
   );
 }
 
+function validarTelefone(telefone) {
+  // Remova espaços em branco e caracteres especiais do número de telefone
+  const numeroLimpo = telefone.replace(/\D/g, "");
+  
+  // A expressão regular valida o formato desejado: 2 dígitos aleatórios + "9" + 8 dígitos aleatórios
+  const regex = /^\d{2}9\d{8}$/;
+  
+  if (!regex.test(numeroLimpo)) {
+    alert("Preencha um número de telefone válido no formato correto: DD9XXXXXXXX (sem espaço ou caracteres especiais).");
+    return false;
+  }
+  
+  return true;
+}
 
+
+
+function calcularIdade(dataNasc) {
+  const dataNascimento = new Date(dataNasc);
+  const dataAtual = new Date();
+
+  // Calcula a idade do usuário
+  const diferencaAnos = dataAtual.getFullYear() - dataNascimento.getFullYear();
+
+  // Verifique se o usuário tem pelo menos 14 anos
+  if (diferencaAnos < 14) {
+    alert("Você deve ter pelo menos 14 anos para se cadastrar.");
+    return false;
+  }
+
+  // Verifique se o usuário já fez aniversário este ano
+  if (
+    diferencaAnos === 14 &&
+    dataNascimento.getMonth() > dataAtual.getMonth()
+  ) {
+    alert("Você deve ter pelo menos 14 anos para se cadastrar.");
+    return false;
+  }
+
+  if (
+    diferencaAnos === 14 &&
+    dataNascimento.getMonth() === dataAtual.getMonth() &&
+    dataNascimento.getDate() > dataAtual.getDate()
+  ) {
+    alert("Você deve ter pelo menos 14 anos para se cadastrar.");
+    return false;
+  }
+
+  return true;
+}
 
 
 // function validarNome(name) {
@@ -135,9 +183,16 @@ const store = new Vuex.Store({
         alert("Preencha todos os campos corretamente!");
         return;
       }
+      if (!calcularIdade(details.dataNasc)) {
+        return; // Encerre o registro se a idade não atender aos requisitos
+      }
     
       if (!validarEmail(details.email)) {
         alert("Preencha um e-mail válido!");
+        return;
+      }
+      if (!validarTelefone(details.telefone)) {
+       
         return;
       }
     
@@ -150,42 +205,21 @@ const store = new Vuex.Store({
         alert("As senhas não coincidem!");
         return;
       }
+
+     
+
+      
     
       try {
         const email = details.email;
         const password = details.password;
     
        
-        await createUserWithEmailAndPassword(auth, email, password);
-    
-        const user = auth.currentUser;
-    
-        await sendEmailVerification(user);
-    
-        alert("Um e-mail de verificação foi enviado para o seu endereço de e-mail. Verifique seu e-mail antes de fazer login.");
-    
-        const checkInterval = 30 * 1000; 
-        let elapsed = 0;
-        
-        const checkEmailVerified = async () => {
-          const user = auth.currentUser;
-          if (user && user.emailVerified) {
-            clearInterval(interval); 
-            console.log('Email verificado com sucesso!');
-            
-            commit("reset");
-          }
-          
-          elapsed += 1000; 
-          
-          if (elapsed >= checkInterval) {
-            clearInterval(interval);
-            console.log('Tempo esgotado. Email não verificado.');
-           
-          }
-        };
-      
-        const interval = setInterval(checkEmailVerified, 1000); 
+        await createUserWithEmailAndPassword(auth, email, password)
+        commit("SET_USER", auth.currentUser);
+        alert("Usuário cadastrado com sucesso!");
+
+        router.go(0); // Isso recarregará a página atual
       } catch (error) {
         alert("Email já cadastrado, tente outro!");
         console.log(error.message);
