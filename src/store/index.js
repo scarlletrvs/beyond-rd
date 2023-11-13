@@ -7,9 +7,18 @@ import Vue from "vue";
 import Vuex from "vuex";
 import { auth } from "../config/index.js";
 import router from "../router/index.js";
+import {  doc, setDoc} from "firebase/firestore";
+import { db } from "../config/index.js";
 
-
-function camposPreenchidos(name, user, email, password, repetirSenha, telefone, dataNasc) {
+function camposPreenchidos(
+  name,
+  user,
+  email,
+  password,
+  repetirSenha,
+  telefone,
+  dataNasc
+) {
   return (
     name !== "" &&
     user !== "" &&
@@ -17,26 +26,26 @@ function camposPreenchidos(name, user, email, password, repetirSenha, telefone, 
     password !== "" &&
     repetirSenha !== "" &&
     telefone !== "" &&
-    dataNasc !== "" 
+    dataNasc !== ""
   );
 }
 
 function validarTelefone(telefone) {
   // Remova espaços em branco e caracteres especiais do número de telefone
   const numeroLimpo = telefone.replace(/\D/g, "");
-  
+
   // A expressão regular valida o formato desejado: 2 dígitos aleatórios + "9" + 8 dígitos aleatórios
   const regex = /^\d{2}9\d{8}$/;
-  
+
   if (!regex.test(numeroLimpo)) {
-    alert("Preencha um número de telefone válido no formato correto: DD9XXXXXXXX (sem espaço ou caracteres especiais).");
+    alert(
+      "Preencha um número de telefone válido no formato correto: DD9XXXXXXXX (sem espaço ou caracteres especiais)."
+    );
     return false;
   }
-  
+
   return true;
 }
-
-
 
 function calcularIdade(dataNasc) {
   const dataNascimento = new Date(dataNasc);
@@ -71,7 +80,6 @@ function calcularIdade(dataNasc) {
 
   return true;
 }
-
 
 // function validarNome(name) {
 //   console.log(typeof name)
@@ -148,7 +156,7 @@ const store = new Vuex.Store({
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        console.log('authregister', auth.currentUser);
+        console.log("authregister", auth.currentUser);
       } catch (error) {
         if (error.code === "auth/invalid-login-credentials") {
           alert("As credenciais email e senha estão incorretas!");
@@ -156,21 +164,23 @@ const store = new Vuex.Store({
           alert(error.message);
         }
         return;
-      }   
+      }
 
       commit("SET_USER", auth.currentUser);
     },
 
     async register({ commit }, details) {
-      if (!camposPreenchidos(
-        details.name,
-        details.user,
-        details.email,
-        details.password,
-        details.repetirSenha,
-        details.telefone,
-        details.dataNasc
-      )) {
+      if (
+        !camposPreenchidos(
+          details.name,
+          details.user,
+          details.email,
+          details.password,
+          details.repetirSenha,
+          details.telefone,
+          details.dataNasc
+        )
+      ) {
         console.log(
           details.name,
           details.user,
@@ -186,46 +196,46 @@ const store = new Vuex.Store({
       if (!calcularIdade(details.dataNasc)) {
         return; // Encerre o registro se a idade não atender aos requisitos
       }
-    
+
       if (!validarEmail(details.email)) {
         alert("Preencha um e-mail válido!");
         return;
       }
       if (!validarTelefone(details.telefone)) {
-       
         return;
       }
-    
+
       if (!validarSenha(details.password)) {
         alert("A senha deve ter no mínimo 8 caracteres!");
         return;
       }
-    
+
       if (details.password !== details.repetirSenha) {
         alert("As senhas não coincidem!");
         return;
       }
 
-     
-
-      
-    
       try {
         const email = details.email;
         const password = details.password;
-    
-       
-        await createUserWithEmailAndPassword(auth, email, password)
-        commit("SET_USER", auth.currentUser);
-        alert("Usuário cadastrado com sucesso!");
 
-        router.go(0); // Isso recarregará a página atual
+        await createUserWithEmailAndPassword(auth, email, password);
+
+        const usersCollection = doc(db, "users", details.email);
+       
+        const docRef = await setDoc(usersCollection, details);
+  
+        console.log("Documento adicionado com ID: ", docRef);
+
+        commit("SET_USER", auth.currentUser);
+        
+        router.go(0); 
       } catch (error) {
         alert("Email já cadastrado, tente outro!");
         console.log(error.message);
       }
     },
-    
+
     async logout({ commit }) {
       await signOut(auth);
 

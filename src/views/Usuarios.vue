@@ -6,23 +6,20 @@
       :profileUser="userUser"
     />
     <h1
-      style="
-        color: black;
-        font-size: 20px;
+      style=" color: black;
+     font-size: 20px;
         font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI',
           Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
           sans-serif;
         margin: 0.8rem;
         align-items: center;
-        display: flex;
-      "
-    >
+        display: flex;" >
       Usuários
     </h1>
     <div class="user-list">
-      <div v-for="user in displayedUsers" :key="user.id" class="user-item">
+      <div v-for="user in users" :key="user.id" class="user-item">
         <router-link
-          :to="'/perfil/' + user.name + '/' + user.user"
+          :to="'/perfil/' + user.nome + '/' + user.user"
           style="color: rgb(247, 246, 246)"
         >
           <v-icon
@@ -30,7 +27,7 @@
             class="white--text"
             >mdi-account</v-icon
           >
-          {{ user.name }}
+          {{ user.nome }}
         </router-link>
       </div>
     </div>
@@ -39,6 +36,10 @@
 
 <script>
 import BarraPesquisa from "@/components/BarraPesquisa.vue";
+import { db } from "../config/index"; 
+import { collection, getDocs } from "firebase/firestore";
+
+import "firebase/firestore";
 
 export default {
   components: {
@@ -49,54 +50,10 @@ export default {
     return {
       search: "",
       userUser: {},
-
-      users: [
-        {
-          id: 0,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          privado: false,
-        },
-        {
-          id: 1,
-          name: "Vitor Gabriel",
-          user: "@vt10",
-          privado: false,
-        },
-        {
-          id: 2,
-          name: "Pedro Lins",
-          user: "@pedro200",
-          privado: true,
-        },
-        {
-          id: 5,
-          name: "Sergio Henrique",
-          user: "@sh22",
-          privado: false,
-        },
-      ],
+      users: [],
     };
   },
   computed: {
-    userDisplayName() {
-      const name = localStorage.getItem("nome");
-      return name || localStorage.getItem("email");
-    },
-    userDisplayUserLocal() {
-      const user = localStorage.getItem("userlocal");
-      return user || localStorage.getItem("email");
-    },
-
-    uniqueUsers() {
-      const uniqueNames = new Map();
-      for (const user of this.users) {
-        if (!uniqueNames.has(user.name)) {
-          uniqueNames.set(user.name, user);
-        }
-      }
-      return Array.from(uniqueNames.values());
-    },
     displayedUsers() {
       return this.search ? this.filteredUsers : this.uniqueUsers;
     },
@@ -115,21 +72,21 @@ export default {
       this.search = term;
     },
 
-    updateUserList() {
-      const name = localStorage.getItem("nome");
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
+    async updateUserList() {
+      try {
+        const usersCollection = collection(db, "users");
+        const querySnapshot = await getDocs(usersCollection);
 
-      this.users.push({
-        id: this.users.length,
-        name: name || (email ? email.slice(0, email.indexOf("@")) : ""),
-        user: user || (email ? "@" + email.slice(0, email.indexOf("@")) : ""),
-        privado: false,
-      });
+        this.users = querySnapshot.docs.map((doc) => doc.data());
+      } catch (error) {
+        console.error("Erro ao obter posts do Firestore:", error);
+      }
     },
   },
+
   mounted() {
     this.updateUserList();
+
   },
 };
 </script>

@@ -9,7 +9,8 @@
           <div class="info-image">
             <img
               class="img"
-              :src="user.userProfileImage"
+              :src= "profileImageUser()"  
+
               alt="Foto do usuário"
             />
           </div>
@@ -32,33 +33,36 @@
           <div class="info-row">
             <div class="info-column">
               <h2>Nome:</h2>
-              <p>{{ editingName ? editedName : user.name }}</p>
+              <p>{{  this.userProfileData.nome  }}</p>
             </div>
             <div class="buttom-edit">
-              <v-btn class="btn-editar">Editar</v-btn>
+              <v-btn class="btn-editar" @click="openNomeModal" >Editar</v-btn>
             </div>
           </div>
         </div>
+
+           <ModalEditNome v-if="showNomeModal"   @close="closeNomeModal" @save="updateName"></ModalEditNome>   
 
         <div style="background-color: #f9e1df" class="dados">
           <div class="info-row" style="background-color: #f9e1df">
             <div style="background-color: #f9e1df" class="info-column">
               <h2>Nome de Usuário:</h2>
-              <p>{{ editingUsername ? editedUsername : user.username }}</p>
+              <p>{{  this.userProfileData.user }}</p>
             </div>
             <div class="buttom-edit">
-              <v-btn class="btn-editar" @click="toggleEdit('username')"
+              <v-btn class="btn-editar" @click="openUserModal" 
                 >Editar</v-btn
               >
             </div>
           </div>
         </div>
+        <ModalEditUser  v-if="showUserModal"   @close="closeUserModal"></ModalEditUser>
 
         <div class="dados">
           <div class="info-row">
             <div class="info-column">
               <h2>Email:</h2>
-              <p>{{ editingEmail ? editedEmail : user.email }}</p>
+              <p>{{ this.userProfileData.email }}</p>
             </div>
             <div class="buttom-edit">
               <v-btn class="btn-editar" @click="openEmailModal">Editar</v-btn>
@@ -93,30 +97,31 @@
           <div class="info-row">
             <div class="info-column">
               <h2>Telefone:</h2>
-              <p>{{ editingPhone ? editedPhone : user.phone }} </p>
+              <p>{{ this.userProfileData.telefone}} </p>
             </div>
             <div class="buttom-edit">
-              <v-btn class="btn-editar" @click="toggleEdit('phone')"
+              <v-btn class="btn-editar" @click="openTelefoneModal"
                 >Editar</v-btn
               >
             </div>
           </div>
         </div>
-
+<ModalEditTelefone  v-if="showTelefoneModal" @close="closeTelefoneModal" ></ModalEditTelefone>
 
         <div style="background-color: #f9e1df" class="dados">
           <div style="background-color: #f9e1df" class="info-row">
             <div style="background-color: #f9e1df" class="info-column">
               <h2>Idade:</h2>
-              <p>{{ editingAge ? editedAge : user.age }} anos</p>
+              <p>{{  this.idade }} anos</p>
             </div>
             <div class="buttom-edit">
-              <v-btn class="btn-editar" @click="toggleEdit('age')"
+              <v-btn class="btn-editar" @click="openIdadeModal"
                 >Editar</v-btn
               >
             </div>
           </div>
         </div>
+        <ModalEditIdade v-if="showIdadeModal" @close="closeIdadeModal"></ModalEditIdade>
 
       </div>
     </div>
@@ -129,31 +134,44 @@
 import { auth } from "../config/index";
 import ModalEditarEmail from "../components/ModalEditarEmail.vue";
 import ModalEditSenha from "../components/ModalEditSenha.vue";
+import { collection, getDocs,  doc , updateDoc } from "firebase/firestore";
+import { db } from "../config/index";
+import ModalEditNome from "../components/ModalEditNome.vue";
+import ModalEditUser from "../components/ModalEditUser.vue";
+import ModalEditIdade from "../components/ModalEditIdade.vue";
+import ModalEditTelefone from "../components/ModalEditTelefone.vue";
 
 export default {
   components: {
     ModalEditarEmail,
-    ModalEditSenha
+    ModalEditSenha,
+    ModalEditNome,
+    ModalEditUser,
+    ModalEditTelefone,
+    ModalEditIdade,
   },
   data() {
     return {
-      user: {
-        name: localStorage.getItem("nome") || (localStorage.getItem("email") ?  localStorage.getItem("email").slice(0, localStorage.getItem("email").indexOf("@")): null),
-        username: localStorage.getItem("userlocal") || (localStorage.getItem("email") ? ( '@' + localStorage.getItem("email").slice(0, localStorage.getItem("email").indexOf("@"))) : null),
-        email: localStorage.getItem("newEmail") || localStorage.getItem("email"),
-        phone: localStorage.getItem("telefone") ? localStorage.getItem("telefone") : "(**) *****-****",
-        age: localStorage.getItem("idade") || "**",
-        userProfileImage:
-          localStorage.getItem("userImage") ||
-          "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
-      },
-      editingEmail: false,
+      users: [],
+      user:{},
+      userUser: localStorage.getItem("userlocal") ,
+   
       editedEmail: "",
       showEmailModal: false,
+      showNomeModal: false,
       newEmail: "",
       showPasswordModal: false,
+      showIdadeModal: false,
+      showTelefoneModal: false,
+      userProfileData: '',
+      showUserModal: false,
+      profileUndefined: "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
+      idade: localStorage.getItem("idade"),
+      
     };
   },
+
+   
   methods: {
     openEmailModal() {
       this.showEmailModal = true;
@@ -161,8 +179,15 @@ export default {
     closeEmailModal() {
       this.showEmailModal = false;
     },
+
     updateEmail(newEmail) {
       this.user.email = newEmail;
+    },
+    openNomeModal() {
+      this.showNomeModal = true;
+    },
+    closeNomeModal() {
+      this.showNomeModal = false;
     },
 
     exluirConta() {
@@ -175,7 +200,92 @@ export default {
   closePasswordModal() {
     this.showPasswordModal = false;
   },
+
+  openUserModal() {
+      this.showUserModal = true;
+    },
+    closeUserModal() {
+      this.showUserModal = false;
+    },
+    openTelefoneModal() {
+      this.showTelefoneModal = true;
+    },
+    closeTelefoneModal() {
+      this.showTelefoneModal = false;
+    },
+    openIdadeModal() {
+      this.showIdadeModal = true;
+    },
+    closeIdadeModal() {
+      this.showIdadeModal = false;
+    },
+
+  async updateProfile() {
+  try {
+    const usersCollection = collection(db, "users");
+    const querySnapshot = await getDocs(usersCollection);
+
+    const currentUserEmail = auth.currentUser.email;
+    const userDoc = querySnapshot.docs.find((doc) => doc.data().email === currentUserEmail);
+
+    if (userDoc) {
+      this.userProfileData = userDoc.data();
+      console.log("Dados do perfil após a atualização:", this.userProfileData);
+      console.log("nome no console:", this.userProfileData && this.userProfileData.nome || 'Nome não disponível');
+
+    } else {
+      console.log("Usuário não encontrado na coleção 'users'.");
+    }
+  } catch (error) {
+    console.error("Erro ao obter dados da coleção 'users':", error);
+  }
+},
+
+profileImageUser() {
+  if (this.userProfileData && this.userProfileData.profileImage) {
+    return this.userProfileData.profileImage;
+  } else {
+    return "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
+  }
+},
+
+
+async updateNameInFirestore(newName) {
+  try {
+    const usersCollection = collection(db, "users");
+    const currentUserEmail = auth.currentUser.email;
+    const userDocRef = doc(usersCollection, currentUserEmail);
+
+    await updateDoc(userDocRef, {
+      nome: newName,
+    });
+
+    this.userProfileData.nome = newName;
+
+    console.log("Nome atualizado no Firestore!");
+  } catch (error) {
+    console.error("Erro ao atualizar nome no Firestore:", error);
+  }
+},
+
+
+async updateName(newName) {
+  try {
+    if (auth.currentUser) {
+      await this.updateNameInFirestore(newName);
+      this.showNomeModal = false;
+    } else {
+      console.error("Usuário não autenticado. Não é possível atualizar o nome.");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar nome no Firestore:", error);
+  }
+}
   },
+ mounted() {
+  this.updateProfile();
+}
+
 };
 </script>
 
@@ -440,4 +550,3 @@ p {
   }
 }
 </style>
-

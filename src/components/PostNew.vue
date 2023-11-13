@@ -1,8 +1,8 @@
 <template>
   <div class="post">
     <div class="profiles">
-      <p class="profilename">{{ profileName }}</p>
-      <p class="profileuser">{{ profileUser }}</p>
+      <p class="profilename">{{ userDisplayName }}</p>
+      <p class="profileuser">{{ userDisplayUserLocal }}</p>
     </div>
 
     <v-text-field
@@ -121,65 +121,88 @@
 </style>
 
 <script>
+import { v4 as uuidv4 } from 'uuid';
+import { collection, getDocs } from "firebase/firestore";
+import { db , auth} from "../config/index";
+
+
 export default {
+  
   data() {
     return {
       textInput: "",
       imageInput: null,
       checkInput: false,
+      userDisplayName: "", 
+      userDisplayUserLocal: "",
       profileUndefined:
         "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
     };
   },
-  computed: {
-    userDisplayImage() {
-      const image = localStorage.getItem("userimage");
-      return image || this.defaultUserProfileImage;
-    },
-  },
+  
   methods: {
-    sendMessages() {
-      const name = localStorage.getItem("nome");
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
-      const currentDate = new Date();
-      const timestamp = currentDate.toLocaleString();
-      const img = localStorage.getItem("userImage") || this.profileUndefined;
+    async updateProfile() {
+      try {
+        const usersCollection = collection(db, "users");
+        const querySnapshot = await getDocs(usersCollection);
 
-      this.$emit("sendMessages", {
-        name: name || (email ? email.slice(0, email.indexOf("@")) : null),
-        user: user || (email ? email.slice(0, email.indexOf("@")) : null),
-        text: this.textInput,
-        image: this.imageInput,
-        img: img,
-        timestamp: timestamp,
-      });
-      console.log("img post new", img);
+        const currentUserEmail = auth.currentUser.email;
+        const userDoc = querySnapshot.docs.find((doc) => doc.data().email === currentUserEmail);
+
+        if (userDoc) {
+          this.userProfileData = userDoc.data();
+          console.log("Dados do perfil após a atualização postnew:", this.userProfileData);
+          console.log("nome no console postnew:", this.userProfileData && this.userProfileData.nome || 'Nome não disponível');
+
+          this.userDisplayName = this.userProfileData.nome;
+          this.userDisplayUserLocal = this.userProfileData.user;
+        } else {
+          console.log("Usuário não encontrado na coleção 'users'.");
+        }
+      } catch (error) {
+        console.error("Erro ao obter dados da coleção 'users':", error);
+      }
+    },
+
+    profileImageUser() {
+      if (this.userProfileData && this.userProfileData.profileImage) {
+        return this.userProfileData.profileImage;
+     } else {
+         return "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
+        }
+      },
+
+
+    async sendMessages() {
+      const post = {
+        name:this.userProfileData.nome ,
+        user: this.userProfileData.user ,
+        email: this.userProfileData.email ,
+        timestamp: new Date().toLocaleString(),
+        img: this.profileImageUser(),
+        id: uuidv4(),
+       
+      };
+
+      this.$emit("saveMessages", post);
+
+      this.$emit("sendMessages", { text: this.textInput, image: this.imageInput });
 
       this.textInput = "";
       this.imageInput = null;
     },
     onImageChange(event) {
-      const selectedFile = event.target.files[0];
-      if (selectedFile) {
-        this.imageInput = selectedFile;
-      }
-    },
+  if (event && event.target) {
+    const selectedFile = event.target.files[0];
+    if (selectedFile) {
+      this.imageInput = selectedFile;
+    }
+  }
+}
   },
-  props: {
-    profileName: {
-      type: String,
-      required: true,
-    },
-    profileUser: {
-      type: String,
-      required: true,
-    },
-
-    img: {
-      type: String,
-      required: true,
-    },
-  },
+  mounted() {
+  this.updateProfile();
+},
+ 
 };
 </script>

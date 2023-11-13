@@ -1,7 +1,8 @@
 <template>
   <div id="app">
   
-    <div class="custom-alert" v-if="showAlert">
+    <div class="custom-alert" v-if="showAlert" >
+    
       <div class="custom-alert-content">
         {{ alertMessage }}
         <button class="custom-alert-button" @click="closeAlert">OK</button>
@@ -16,7 +17,7 @@
             <span class="hide-text-on-small-screen">Home</span>
           </router-link> |
 
-          <router-link :to="'/perfil/' + userDisplayName + '/' + userDisplayUserLocal">
+          <router-link :to="'/perfil/' + userProfile.nome + '/' +  userProfile.user">
             <i id="i" class="mdi mdi-account"></i>
             <span class="hide-text-on-small-screen">Perfil</span>
           </router-link> |
@@ -45,6 +46,89 @@
     <LoadingComponent v-if="isLoading" :loadingText="loadingText" />
   </div>
 </template>
+
+
+<script>
+import LoadingComponent from "@/components/LoadingComponent.vue";
+import { collection, getDocs } from "firebase/firestore";
+import { db, auth } from "./config/index";
+export default {
+  components: {
+    LoadingComponent
+  },
+  data() {
+    return {
+      showAlert: false,
+      alertMessage: "",
+      isLoading: true, 
+      loadingText: 'Aguarde...',
+      userProfile: null,
+      users: [ ],
+      user: null
+    };
+  },
+  beforeCreate() {
+    this.$store.dispatch("fetchUser");
+
+     /* eslint-disable no-unused-vars */
+    this.$router.beforeEach((to, from, next) => {
+      this.startLoading();
+      next();
+    });
+
+    this.$router.afterEach((to, from) => {
+      this.stopLoading();
+    });
+    /* eslint-enable no-unused-vars */
+  },
+ 
+ 
+  methods: {
+    async updateProfileApp() {
+  try {
+    const usersCollection = collection(db, "users");
+    const querySnapshot = await getDocs(usersCollection);
+
+    const currentUserEmail = auth.currentUser.email;
+    const userDoc = querySnapshot.docs.find((doc) => doc.data().email === currentUserEmail);
+
+    if (userDoc) {
+      this.userProfile = userDoc.data();
+      console.log("Dados do perfil após a atualização appvue:", this.userProfile);
+    } else {
+      console.log("Usuário não encontrado na coleção 'users'.");
+    }
+  } catch (error) {
+    console.error("Erro ao obter dados da coleção 'users':", error);
+  }
+},
+
+    sair() {
+      this.startLoading();
+      this.$store.dispatch("logout").then(() => {
+        localStorage.clear();
+        this.openAlert("Você foi desconectado com sucesso!");
+      });
+    },
+    openAlert(message) {
+      this.alertMessage = message;
+      this.showAlert = true;
+    },
+    closeAlert() {
+      this.showAlert = false;
+    },
+    startLoading() {
+      this.isLoading = true;
+    },
+    stopLoading() {
+      this.isLoading = false;
+    },
+  },
+  mounted() {
+  this.updateProfileApp();
+}
+};
+</script>
 
 <style lang="scss">
 #app {
@@ -150,100 +234,3 @@ nav {
 
 }
 </style>
-<script>
-import LoadingComponent from "@/components/LoadingComponent.vue";
-
-export default {
-  components: {
-    LoadingComponent
-  },
-  data() {
-    return {
-      showAlert: false,
-      alertMessage: "",
-      isLoading: true, 
-      loadingText: 'Aguarde...',
-      users: [
-        {
-          id: 0,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          privado: false,
-        },
-        {
-          id: 1,
-          name: "Vitor Gabriel",
-          user: "@vt10",
-          privado: false,
-        },
-        {
-          id: 2,
-          name: "Pedro Lins",
-          user: "@pedro200",
-          privado: true,
-        },
-        {
-          id: 5,
-          name: "Sergio Henrique",
-          user: "@sh22",
-          privado: false,
-        },
-      ],
-    };
-  },
-  beforeCreate() {
-    this.$store.dispatch("fetchUser");
-
-     /* eslint-disable no-unused-vars */
-    this.$router.beforeEach((to, from, next) => {
-      this.startLoading();
-      next();
-    });
-
-    this.$router.afterEach((to, from) => {
-      this.stopLoading();
-    });
-    /* eslint-enable no-unused-vars */
-  },
-  created() {
-    this.profileName = this.$route.params.userName;
-    this.profileUser = this.$route.params.userNick;
-    
-  
-  },
-  computed: {
-    userDisplayName() {
-      const name = localStorage.getItem("nome");
-      const email = localStorage.getItem("email");
-      return name || (email ? email.slice(0, email.indexOf("@")) : null);
-    },
-    userDisplayUserLocal() {
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
-      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
-    },
-  },
-  methods: {
-    sair() {
-      this.startLoading();
-      this.$store.dispatch("logout").then(() => {
-        localStorage.clear();
-        this.openAlert("Você foi desconectado com sucesso!");
-      });
-    },
-    openAlert(message) {
-      this.alertMessage = message;
-      this.showAlert = true;
-    },
-    closeAlert() {
-      this.showAlert = false;
-    },
-    startLoading() {
-      this.isLoading = true;
-    },
-    stopLoading() {
-      this.isLoading = false;
-    },
-  },
-};
-</script>

@@ -71,6 +71,7 @@
           <div class="form-group">
             <label for="imagem">Imagem:</label>
             <input
+           
               type="file"
               @change="processImage"
               id="imagem"
@@ -107,47 +108,45 @@ export default {
         repetirSenha: "",
         telefone: "",
         dataNasc: "",
+       
       },
     };
   },
   methods: {
     processImage(event) {
-      const file = event.target.files[0];
+  const file = event.target.files[0];
 
-      if (file) {
-        const reader = new FileReader();
+  if (file) {
+    const reader = new FileReader();
 
-        reader.onload = (e) => {
-          const base64Image = e.target.result;
+    reader.onload = (e) => {
+      const base64Image = e.target.result;
 
-          localStorage.setItem("userImage", base64Image);
 
-          this.user.profileImage = base64Image;
-        };
+      this.user.profileImage = base64Image;
 
-        reader.readAsDataURL(file);
-      }
+     
+      localStorage.setItem("userImage", base64Image);
+    };
 
-      this.calculateAge(this.user.dataNasc);
+    reader.readAsDataURL(file);
+  }
     },
-
     voltar() {
       router.push({ name: "login" });
     },
     async cadastrar() {
       localStorage.setItem("email", this.user.email);
       localStorage.setItem("nome", this.user.nome);
-      localStorage.setItem("userlocal", "@" + this.user.user);
+      localStorage.setItem("userlocal", this.user.user);
       localStorage.setItem("telefone", this.user.telefone);
       localStorage.setItem("birth", this.user.dataNasc);
 
       const aniversario = new Date(this.user.dataNasc);
       const dataAtual = new Date();
 
-      // Calcula a idade
       const idade = this.calculateAge(aniversario, dataAtual);
 
-      // Armazena a idade no localStorage
       localStorage.setItem("idade", idade);
 
       this.$store.dispatch("loadUsers");
@@ -155,7 +154,8 @@ export default {
       await this.$store.dispatch("register", this.user);
       if (this.auth.isLoggedIn()) {
         const email = localStorage.getItem("email");
-
+            alert("cadastro feito com sucesso!");
+            window.location.reload();
         if (!email) {
           console.log("Nenhum email armazenado no local storage.");
         } else {
@@ -163,6 +163,8 @@ export default {
         }
       }
     },
+
+
     calculateAge(dateOfBirth, currentDate) {
       const diff = currentDate - dateOfBirth;
 
@@ -183,7 +185,7 @@ export default {
   display: flex;
   align-items: center;
   justify-content: center;
- height: 100vh !important;
+  height: 100vh !important;
   background-color: pink;
 }
 
@@ -264,7 +266,7 @@ label {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
 }
-.input-field-imagem{
+.input-field-imagem {
   width: 100%;
   margin-top: -2px;
   padding: 0.5rem;
@@ -276,10 +278,9 @@ label {
   padding-left: 0.3rem;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-
 }
 
-.input-field-dataNasc{
+.input-field-dataNasc {
   width: 100%;
   margin-top: -2px;
 
@@ -292,9 +293,7 @@ label {
   padding-left: 0.3rem;
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
     Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-
 }
-
 
 p {
   font-size: 1rem;
@@ -322,10 +321,10 @@ body {
 
 @media (min-width: 800px) and (max-width: 870px) {
   .page {
-  height: 100% !important;
+    height: 100% !important;
 
-  background-color: pink;
-}
+    background-color: pink;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -344,18 +343,18 @@ body {
 
 @media (min-width: 700px) and (max-width: 912px) {
   .page {
-  height: 100vh !important;
-  background-color: pink !important;
-}
+    height: 100vh !important;
+    background-color: pink !important;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
     padding: 10px;
     display: flex;
     align-items: center;
-    width:70%;
+    width: 70%;
     height: auto;
-    margin-top: 4% ;
+    margin-top: 4%;
     border-radius: 40px;
     border: 2px solid white;
   }
@@ -366,9 +365,9 @@ body {
 
 @media (min-width: 650px) and (max-width: 700px) {
   .page {
-  height: 100vh !important;
-  background-color: pink !important;
-}
+    height: 100vh !important;
+    background-color: pink !important;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -387,9 +386,9 @@ body {
 }
 @media (min-width: 600px) and (max-width: 650px) {
   .page {
-  height: 100vh !important;
-  background-color: pink;
-}
+    height: 100vh !important;
+    background-color: pink;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -400,17 +399,15 @@ body {
     height: auto;
     border-radius: 40px;
     border: 2px solid white;
-   
   }
 }
 
 @media (min-width: 530px) and (max-width: 600px) {
-
   .page {
-  height: 100% !important;
+    height: 100% !important;
 
-  background-color: pink;
-}
+    background-color: pink;
+  }
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -441,21 +438,18 @@ body {
   }
 
   .form-column-right {
-  margin-left: 8.5%;
-  width: 50%;
-
-}
+    margin-left: 8.5%;
+    width: 50%;
+  }
 }
 
 @media (min-width: 400px) and (max-width: 530px) {
   .page {
-  height: 100% !important;
+    height: 100% !important;
 
-  background-color: pink;
-}
- 
- 
- 
+    background-color: pink;
+  }
+
   .cadastro {
     flex-direction: column;
     background-color: rgb(148, 20, 114);
@@ -527,7 +521,6 @@ body {
 }
 
 @media (min-width: 280px) and (max-width: 400px) {
-
   .page {
     flex-direction: column;
     height: 100vh;

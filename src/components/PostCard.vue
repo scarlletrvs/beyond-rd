@@ -14,8 +14,8 @@
     >
       <div style="">
         <v-img
-          v-if="message.profileImage"
-          :src="message.profileImage"
+         
+          :src="img"
           style="
             width: 45px;
             height: 45px;
@@ -23,16 +23,7 @@
             border: 2px solid black;
           "
         ></v-img>
-        <v-img
-          v-else
-          :src="formData.defaultUserProfileImage"
-          style="
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            border: 2px solid black;
-          "
-        ></v-img>
+      
       </div>
       <div
         style="
@@ -54,28 +45,25 @@
           <router-link
             :to="'/perfil/' + message.name + '/' + message.user"
             style="color: gray"
-            >{{ message.user }}</router-link
+            >{{( '@'+ message.user) }}</router-link
           >
         </v-card-text>
       </div>
       <v-card-text>{{ message.timestamp }}</v-card-text>
     </div>
     <v-card-text
-      style="
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         color: black;
         font-size: 0.9rem;
         margin-left: 5px;
-        margin-top: -1.4rem;
-      "
-    >
+        margin-top: -1.4rem; " >
       {{ message.text }}
     </v-card-text>
     <v-img v-if="message.image" :src="message.image" class="v-img"></v-img>
     <v-row class="v-row">
       <v-btn
         @click="openDialog()"
-        v-if="message.user === userDisplayUserLocal"
+        v-if=" isCurrentUserProfileUser() "
         class="v-btn1"
         icon
       >
@@ -84,7 +72,7 @@
 
       <v-btn
         @click="deleteMessages(message.id)"
-        v-if="message.user === userDisplayUserLocal"
+        v-if=" isCurrentUserProfileUser() "
         class="v-btn2"
         icon
       >
@@ -121,7 +109,6 @@
             ></v-file-input>
 
             <v-btn
-             
               @click="closeDialog(message)"
               style="color: red !important; margin-right: 5px"
               class="btn-postar-dialog"
@@ -131,7 +118,6 @@
 
             <v-btn
               style="color: blue !important"
-          
               @click="
                 editMessages(
                   message.id,
@@ -151,6 +137,17 @@
 </template>
 
 <script>
+
+import 'firebase/firestore';
+import { auth } from "../config/index";
+import { db } from "../config/index";
+import {
+  collection,
+  getDocs,
+ 
+} from "firebase/firestore";
+
+
 export default {
   data() {
     return {
@@ -161,40 +158,9 @@ export default {
         defaultUserProfileImage:
           "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
       },
-      users: [
-        {
-          id: 0,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          privado: false,
-          userProfileImage:
-            "https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg",
-        },
-        {
-          id: 1,
-          name: "Vitor",
-          user: "@vt10",
-          privado: false,
-          userProfileImage:
-            "https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-um-capacete-branco-e-oculos_625492-10145.jpg",
-        },
-        {
-          id: 2,
-          name: "Pedro",
-          user: "@pedro200",
-          privado: true,
-          userProfileImage:
-            "https://i.pinimg.com/474x/fb/ec/7f/fbec7fd8ed507cae788b0c8e310a32df.jpg",
-        },
-        {
-          id: 5,
-          name: "Sergio Henrique",
-          user: "@sh22",
-          privado: false,
-          userProfileImage:
-            "https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg",
-        },
-      ],
+      users: [ ],
+      messages:[],
+      user: null,
     };
   },
 
@@ -206,48 +172,44 @@ export default {
     },
   },
   methods: {
-    updateProfile() {
-      const name = localStorage.getItem("nome");
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
-      const profileImage = localStorage.getItem("userImage");
 
-      const existingProfile = this.users.find(
-        (profile) => profile.user === user
-      );
 
-      if (existingProfile) {
-        existingProfile.name =
-          name || (email ? email.slice(0, email.indexOf("@")) : "");
-        if (profileImage) {
-          existingProfile.userProfileImage = profileImage;
-        }
-      } else {
-        this.users.push({
-          id: this.users.length,
-          name: name || (email ? email.slice(0, email.indexOf("@")) : ""),
-          user: user || (email ? "@" + email.slice(0, email.indexOf("@")) : ""),
-          privado: false,
-          userProfileImage:
-            profileImage ||
-            "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
-        });
+    async updateProfile() {
+  try {
+    const usersCollection = collection(db, "users");
+    const querySnapshot = await getDocs(usersCollection);
+
+    this.users = querySnapshot.docs.map((doc) => doc.data());
+    
+    const user = this.users.find((user) => user.user === this.profileUser);
+
+    if (user) {
+      this.profileName = user.name;
+
+    } else {
+      this.profileName = this.$route.params.userName;
+    }
+
+    console.log("Perfis após a atualização:");
+    console.log(this.users);
+  } catch (error) {
+    console.error("Erro ao obter dados da coleção 'users':", error);
+  }
+},
+    
+    isCurrentUserProfileUser() {
+    if (this.message.user) {
+      const userProfile = this.users.find((user) => user.user === this.message.user);
+
+      if (userProfile) {
+        const currentUserEmail = auth.currentUser.email;
+        return userProfile.email === currentUserEmail;
       }
-    },
-    associateProfileImageToMessage() {
-      const user = this.users.find((u) => u.user === this.message.user);
-      if (user) {
-        this.$set(
-          this.message,
-          "profileImage",
-          user.userProfileImage || this.defaultUserProfileImage
-        );
-      } else {
-        this.$set(this.message, "profileImage", this.defaultUserProfileImage);
-      }
-    },
-
-    navigateToProfile() {
+    }
+    return false;
+  },
+   
+ navigateToProfile() {
       this.$emit(
         "navigateToProfile",
         this.message.name,
@@ -256,8 +218,11 @@ export default {
       );
     },
     deleteMessages(id) {
-      this.$emit("deleteMessages", id);
-    },
+    this.$emit("deleteMessages", id);
+
+    console.log(`Excluir mensagem com ID: ${id}`);
+},
+
     editMessages(id, novoTexto, editingImage) {
       this.$emit("editMessages", { id, novoTexto, editingImage });
       this.closeDialog();
@@ -271,26 +236,22 @@ export default {
       this.dialog = false;
     },
     onImageChange(event) {
-    const selectedFile = event.target.files[0];
-    if (selectedFile) {
-     
-      this.$emit('imageChange', selectedFile);
-    }
+      const selectedFile = event.target.files[0];
+      if (selectedFile) {
+        this.$emit("imageChange", selectedFile);
+      }
+    },
   },
-  },
-  created() {
-    this.updateProfile();
-    this.associateProfileImageToMessage();
-  },
+  async created() {
+ 
+ this.updateProfile();
+},
   props: {
     postId: {
-      type: Number,
-      required: true,
-    },
-    profileUser: {
       type: String,
       required: true,
     },
+   
     img: {
       type: String,
       required: true,
@@ -299,7 +260,8 @@ export default {
       type: Object,
       required: true,
     },
-  },
+   
+} 
 };
 </script>
 

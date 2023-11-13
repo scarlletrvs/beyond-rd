@@ -12,7 +12,7 @@
   align-items: center;
   justify-content: center;
   height: 100%;
-  background-color: rgb(148, 20, 114); /* Altere a cor de fundo */
+  background-color: rgb(148, 20, 114); 
 }
 
 .loading-spinner {

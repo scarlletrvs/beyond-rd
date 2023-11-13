@@ -8,13 +8,11 @@
       <BarraPesquisa @search-posts="performSearch" :search="search" />
       <div style="margin-top: 3px">
         <PostNew
-          :profileName="userDisplayName"
-          :profileUser="userDisplayUser"
           @sendMessages="sendMessages"
-          :img="img"
           :message="message"
         />
       </div>
+
       <div
         v-for="message in filteredMessages"
         :key="message.id"
@@ -23,11 +21,10 @@
         <div class="post-card-container">
           <PostCard
             :message="message"
-            :postId="message.id"
-            :profileUser="message.user"
-            :img="message.profileImage"
+            :postId="String(message.id)"
             @deleteMessages="deleteMessages"
             @editMessages="editMessages"
+            :img="message.img"
           />
         </div>
       </div>
@@ -38,14 +35,30 @@
 </template>
 
 <script>
+import 'firebase/firestore';
 import { format } from "date-fns";
-
+import { v4 as uuidv4 } from "uuid";
 import PostCard from "@/components/PostCard.vue";
 import BarraMenu from "@/components/BarraMenu.vue";
 import PostNew from "@/components/PostNew.vue";
 import BarraPesquisa from "@/components/BarraPesquisa.vue";
 import ButtomScrollToTop from "@/components/ButtomScrollToTop.vue";
 import { onAuthStateChanged, getAuth } from "firebase/auth";
+import {
+  collection,
+  setDoc,
+  doc,
+  getDocs,
+  deleteDoc,
+  runTransaction,
+  updateDoc,
+  getDoc,
+  query ,
+  orderBy
+} from "firebase/firestore";
+import { auth } from "../config/index";
+import { db } from "../config/index";
+
 export default {
   components: {
     PostCard,
@@ -63,117 +76,14 @@ export default {
       imageInput: null,
       editingImage: null,
       search: "",
-      img: "",
-      users: [
-        {
-          id: 0,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          privado: false,
-          userProfileImage:
-            "https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg",
-        },
-        {
-          id: 1,
-          name: "Vitor",
-          user: "@vt10",
-          privado: false,
-          userProfileImage:
-            "https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-um-capacete-branco-e-oculos_625492-10145.jpg",
-        },
-        {
-          id: 2,
-          name: "Pedro",
-          user: "@pedro200",
-          privado: true,
-          userProfileImage:
-            "https://i.pinimg.com/474x/fb/ec/7f/fbec7fd8ed507cae788b0c8e310a32df.jpg",
-        },
-        {
-          id: 5,
-          name: "Sergio Henrique",
-          user: "@sh22",
-          privado: false,
-          userProfileImage:
-            "https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg",
-        },
-      ],
-      messages: [
-        {
-          id: 0,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          text: "oi bom dia!",
-          image: null,
-          privado: false,
-          timestamp: "22/10/23  20:52:01",
-          profileImage:
-            "https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg",
-        },
-        {
-          id: 1,
-          name: "Vitor Gabriel",
-          user: "@vt10",
-          text: "sem bom dia!",
-          image: null,
-          privado: false,
-          timestamp: "25/10/23  10:52:01",
-          profileImage:
-            "https://img.freepik.com/fotos-premium/um-personagem-de-desenho-animado-com-um-capacete-branco-e-oculos_625492-10145.jpg",
-        },
-        {
-          id: 2,
-          name: "Pedro Lins",
-          user: "@pedro200",
-          text: "bom dia!",
-          image: null,
-          privado: true,
-          timestamp: "29/10/23  13:10:01",
-          profileImage:
-            "https://i.pinimg.com/474x/fb/ec/7f/fbec7fd8ed507cae788b0c8e310a32df.jpg",
-        },
-        {
-          id: 3,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          text: "oi gente!",
-          image: null,
-          privado: false,
-          timestamp: "30/10/23  01:10:01",
-          profileImage:
-            "https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg",
-        },
-        {
-          id: 4,
-          name: "Maria Luiza",
-          user: "@Malu10",
-          text: "tudo bom povo!",
-          image: null,
-          privado: false,
-          timestamp: "31/10/23  03:10:01",
-          profileImage:
-            "https://i.pinimg.com/originals/04/19/4b/04194ba6662d1620d7533dab19ccf61a.jpg",
-        },
-        {
-          id: 5,
-          name: "Sergio Henrique",
-          user: "@sh22",
-          text: "Eu amo front end",
-          image: null,
-          privado: false,
-          timestamp: "31/10/23  00:20:01",
-          profileImage:
-            "https://i.pinimg.com/564x/10/f0/d5/10f0d53a1a1bb3263af8663459404ba8.jpg",
-        },
-      ],
+      users: [],
+      messages: [],
     };
   },
 
   computed: {
     userDisplayName() {
-      const name = localStorage.getItem("nome");
-      const email = localStorage.getItem("email");
-      return name || (email ? email.slice(0, email.indexOf("@")) : null);
+     return auth.currentUser.displayName
     },
     userDisplayUserLocal() {
       const user = localStorage.getItem("userlocal");
@@ -185,9 +95,7 @@ export default {
       return image || this.defaultUserProfileImage;
     },
     userDisplayUser() {
-      const user = localStorage.getItem("userlocal");
-      const email = localStorage.getItem("email");
-      return user || (email ? "@" + email.slice(0, email.indexOf("@")) : null);
+      return auth.currentUser.user
     },
 
     checkInput() {
@@ -197,96 +105,150 @@ export default {
     },
 
     filteredMessages() {
-      if (this.search) {
-        const searchTerm = this.search.toLowerCase();
-        return this.messages.filter((message) => {
-          return (
-            (message.text.toLowerCase().includes(searchTerm) ||
-              message.user.toLowerCase().includes(searchTerm) ||
-              message.name.toLowerCase().includes(searchTerm)) &&
-            !message.privado
-          );
-        });
-      } else {
-        return this.messages.filter((message) => !message.privado);
-      }
+    if (this.search) {
+      const searchTerm = this.search.toLowerCase();
+      return this.messages.filter((message) => {
+        return (
+  (message.text && message.text.toLowerCase().includes(searchTerm) ||
+   message.user && message.user.toLowerCase().includes(searchTerm) ||
+   message.name && message.name.toLowerCase().includes(searchTerm)) &&
+  !message.privado
+);
+      });
+    } else {
+      return this.messages.filter((message) => !message.privado);
+    }
+  }
     },
-  },
+  
   created() {
     const auth = getAuth();
 
     onAuthStateChanged(auth, (user) => {
       if (user) {
         console.log("Dados do currentUser:", user);
-        // Exibir os dados do currentUser no console
         console.log("Nome do usuário:", user.displayName);
         console.log("Email do usuário:", user.email);
         console.log("UID do usuário:", user.uid);
-        // Você pode adicionar mais propriedades aqui, se necessário
       } else {
         console.log("Nenhum usuário autenticado.");
       }
     });
   },
   methods: {
-    associateProfileImageToMessage() {
-      const user = this.users.find((u) => u.user === this.message.user);
-      if (user) {
-        this.$set(
-          this.message,
-          "profileImage",
-          user.userProfileImage || this.defaultUserProfileImage
-        );
-      } else {
-        this.$set(this.message, "profileImage", this.defaultUserProfileImage);
-      }
-    },
-    sendMessages(newMessage) {
-      const email = localStorage.getItem("email");
-      const nome =
-        localStorage.getItem("nome") ||
-        (email ? email.slice(0, email.indexOf("@")) : null);
-      const user =
-        localStorage.getItem("userlocal") ||
-        (email ? "@" + email.slice(0, email.indexOf("@")) : null);
-      const img =
-        localStorage.getItem("userImage") ||
-        "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
-      const id = this.messages.length;
-      if (newMessage.text || newMessage.image) {
-        const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss");
-        this.messages.unshift({
-          id: id,
-          name: nome,
-          user: user,
-          text: newMessage.text,
-          image: newMessage.image
-            ? URL.createObjectURL(newMessage.image)
-            : null,
-          img: img,
-          timestamp: timestamp,
-        });
-        console.log("img home:", img);
-        console.log("id home:", id);
-      }
-    },
-    performSearch(term) {
-      this.search = term;
-    },
 
-    deleteMessages(id) {
-      this.messages = this.messages.filter((message) => message.id !== id);
-    },
-    editMessages({ id, novoTexto, editingImage }) {
-      const post = this.messages.find((message) => message.id === id);
-      post.text = novoTexto;
+    async sendMessages(newMessage) {
+  try {
+    const user = auth.currentUser;
+
+    if (!user) {
+      return;
+    }
+
+    const usersCollection = collection(db, "users");
+    const userQuery = await getDocs(usersCollection);
+    const currentUserData = userQuery.docs.find(doc => doc.data().email === user.email)?.data();
+
+    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss");
+    const userImage = currentUserData?.profileImage || "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
+    const text = newMessage && newMessage.text ? newMessage.text : "";
+    const image = newMessage && newMessage.image ? URL.createObjectURL(newMessage.image) : null;
+
+    const post = {
+      name: currentUserData?.nome || "Nome não disponível",
+      user: currentUserData?.user || "Usuário não disponível",
+      text: text,
+      image: image,
+      img: userImage,
+      timestamp: timestamp,
+      id: uuidv4(),
+    };
+
+    const PostsCollection = collection(db, "Posts");
+
+    await setDoc(doc(PostsCollection, post.id), post);
+    console.log("img post new ", userImage);
+
+    console.log("Documento adicionado com ID: ", post.id);
+    this.messages.unshift(post);
+  } catch (error) {
+    console.error("Erro ao adicionar post ao Firestore:", error);
+  }
+},
+
+
+performSearch(term) {
+  console.log("Termo de pesquisa:", term);
+  this.search = term;
+},
+    async deleteMessages(postId) {
+  try {
+    const PostsCollection = collection(db, "Posts");
+
+    await deleteDoc(doc(PostsCollection, postId));
+
+    this.messages = this.messages.filter((message) => message.id !== postId);
+  } catch (error) {
+    console.error("Erro ao excluir post do Firestore:", error);
+  }
+},
+
+
+    
+async editMessages({ id, novoTexto, editingImage }) {
+  try {
+    const PostsCollection = collection(db, "Posts");
+    const postDocRef = doc(PostsCollection, id);
+
+    const postDoc = await getDoc(postDocRef);
+
+    if (postDoc.exists()) {
+      const updateData = {
+        text: novoTexto,
+      };
+
       if (editingImage) {
-        post.image = URL.createObjectURL(editingImage);
+        updateData.image = URL.createObjectURL(editingImage);
       }
-    },
-    deleteAllMessages() {
+
+      await updateDoc(postDocRef, updateData);
+
+      const updatedPost = { ...postDoc.data(), ...updateData };
+      const index = this.messages.findIndex((message) => message.id === id);
+
+      if (index !== -1) {
+        this.$set(this.messages, index, updatedPost);
+      }
+    } else {
+      console.error("Documento não encontrado no Firestore:", id);
+    }
+  } catch (error) {
+    console.error("Erro ao editar post no Firestore:", error);
+  }
+},
+
+
+
+    async deleteAllMessages() {
+    try {
+      const PostsCollection = collection(db, "Posts");
+
+      await runTransaction(db, async (transaction) => {
+        const querySnapshot = await getDocs(PostsCollection);
+
+        querySnapshot.forEach((doc) => {
+          transaction.delete(doc.ref);
+        });
+      });
+
       this.messages = [];
-    },
+    } catch (error) {
+      console.error("Erro ao excluir todos os posts do Firestore:", error);
+    }
+  },
+
+
+
     onImageChange(event) {
       const selectedFile = event.target.files[0];
       if (selectedFile) {
@@ -300,7 +262,18 @@ export default {
       required: true,
     },
   },
-  mounted() {},
+  async mounted() {
+  try {
+    const PostsCollection = collection(db, "Posts");
+    const querySnapshot = await getDocs(query(PostsCollection, orderBy('timestamp', 'desc')));
+
+    this.messages = querySnapshot.docs.map((doc) => doc.data());
+  } catch (error) {
+    console.error("Erro ao obter posts do Firestore:", error);
+  }
+},
+
+
 };
 </script>
 

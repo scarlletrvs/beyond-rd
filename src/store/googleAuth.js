@@ -1,4 +1,9 @@
-import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
+} from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
 
 async function handleGoogle() {
   const provider = new GoogleAuthProvider();
@@ -6,35 +11,42 @@ async function handleGoogle() {
   try {
     const auth = getAuth();
     const result = await signInWithPopup(auth, provider);
-    const photo = auth.currentUser.photoURL;
-    const name = auth.currentUser.displayName;
-    const userGoogle = auth.currentUser.email;
-    const telefone = auth.currentUser.phoneNumber;
     const user = result.user;
 
-   
+    const { displayName, email, phoneNumber, photoURL } = auth.currentUser;
+
+    await addUserToFirestore({
+      nome: displayName,
+      user:  email.slice(0, email.indexOf("@")), 
+      telefone: phoneNumber || "", 
+      email: email,
+      dataNascimento: "", 
+      profileImage: photoURL
+    });
+
     console.log("Usuário autenticado:", user);
 
-    localStorage.setItem("email", user.email);
-    localStorage.setItem("telefone", telefone);
-    localStorage.setItem("telefone", telefone);
-    localStorage.setItem("userImage", photo);
-    localStorage.setItem("nome", name);
-    localStorage.setItem(
-      "userlocal",
-      "@" + userGoogle.slice(0, userGoogle.indexOf("@"))
-    );
-   
 
     window.location.href = "/home";
-    console.log('authregister',auth.currentUser); 
+    console.log('authregister', auth.currentUser);
 
-    
-  } 
-  catch (error) {
+  } catch (error) {
     console.error("Erro ao fazer login com o Google:", error);
   }
+}
 
+async function addUserToFirestore(userData) {
+  const db = getFirestore();
+
+  try {
+    const userRef = doc(db, "users", userData.email);
+
+    await setDoc(userRef, userData);
+
+    console.log("Documento adicionado com ID: ", userData.email);
+  } catch (e) {
+    console.error("Erro ao adicionar usuário ao Firestore: ", e);
+  }
 }
 
 export default handleGoogle;
