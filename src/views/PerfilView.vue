@@ -160,47 +160,45 @@ export default {
   );
 },
 
-    async sendMessages(newMessage) {
-      try {
-        const user = auth.currentUser;
+async sendMessages(newMessage) {
+  try {
+    const user = auth.currentUser;
 
-        if (!user) {
-          return;
-        }
+    if (!user) {
+      return;
+    }
 
-        const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss");
-        const userImage =
-          localStorage.getItem("userImage") ||
-          "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
-        const text = newMessage && newMessage.text ? newMessage.text : "";
-        const image =
-          newMessage && newMessage.image
-            ? URL.createObjectURL(newMessage.image)
-            : null;
+    const usersCollection = collection(db, "users");
+    const userQuery = await getDocs(usersCollection);
+    const currentUserData = userQuery.docs.find(doc => doc.data().email === user.email)?.data();
 
-        const post = {
-          name: localStorage.getItem("nome") || user.displayName,
-          user:
-            localStorage.getItem("userlocal") ||
-            "@" + user.email.slice(0, user.email.indexOf("@")),
-          text: text,
-          image: image,
-          img: userImage, 
-          timestamp: timestamp,
-          id: uuidv4(),
-        };
+    const timestamp = format(new Date(), "dd/MM/yy HH:mm:ss");
+    const userImage = currentUserData?.profileImage || "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
+    const text = newMessage && newMessage.text ? newMessage.text : "";
+    const image = newMessage && newMessage.image ? URL.createObjectURL(newMessage.image) : null;
 
-        const PostsCollection = collection(db, "Posts");
+    const post = {
+      name: currentUserData?.nome || "Nome não disponível",
+      user: currentUserData?.user || "Usuário não disponível",
+      text: text,
+      image: image,
+      img: userImage,
+      timestamp: timestamp,
+      id: uuidv4(),
+    };
 
-        await setDoc(doc(PostsCollection, post.id), post);
-        console.log("img post new ", userImage);
+    const PostsCollection = collection(db, "Posts");
 
-        console.log("Documento adicionado com ID: ", post.id);
-        this.messages.push(post);
-      } catch (error) {
-        console.error("Erro ao adicionar post ao Firestore:", error);
-      }
-    },
+    await setDoc(doc(PostsCollection, post.id), post);
+    console.log("img post new ", userImage);
+
+    console.log("Documento adicionado com ID: ", post.id);
+    this.messages.unshift(post);
+  } catch (error) {
+    console.error("Erro ao adicionar post ao Firestore:", error);
+  }
+},
+
 
     async deleteMessages(postId) {
   try {
