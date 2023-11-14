@@ -20,7 +20,7 @@ async function handleGoogle() {
       user:  email.slice(0, email.indexOf("@")), 
       telefone: phoneNumber || "", 
       email: email,
-      dataNascimento: "", 
+      dataNasc: "", 
       profileImage: photoURL
     });
 

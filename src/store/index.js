@@ -219,6 +219,8 @@ const store = new Vuex.Store({
         const email = details.email;
         const password = details.password;
 
+        
+
         await createUserWithEmailAndPassword(auth, email, password);
 
         const usersCollection = doc(db, "users", details.email);

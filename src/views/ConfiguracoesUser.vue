@@ -15,7 +15,7 @@
             />
           </div>
           <div class="buttom-edit-image">
-            <v-btn class="btn-editar" @click="toggleEdit('name')">Editar</v-btn>
+            <v-btn class="btn-editar" @click="openImageProfileModal">Editar</v-btn>
           </div>
         </div>
         <div class="div-btn-exluir">
@@ -26,7 +26,9 @@
             >Excluir conta</v-btn
           >
         </div>
+    
       </div>
+           <ModalEditImage   v-if="showImageProfileModal"   @close="closeImageProfileModal" @save="updateImageProfile"/>
 
       <div class="user-info">
         <div class="dados">
@@ -56,7 +58,7 @@
             </div>
           </div>
         </div>
-        <ModalEditUser  v-if="showUserModal"   @close="closeUserModal"></ModalEditUser>
+        <ModalEditUser  v-if="showUserModal"   @close="closeUserModal" @save="updateUser"></ModalEditUser>
 
         <div class="dados">
           <div class="info-row">
@@ -106,14 +108,13 @@
             </div>
           </div>
         </div>
-<ModalEditTelefone  v-if="showTelefoneModal" @close="closeTelefoneModal" ></ModalEditTelefone>
+<ModalEditTelefone  v-if="showTelefoneModal" @close="closeTelefoneModal"  @save="updatePhone"></ModalEditTelefone>
 
         <div style="background-color: #f9e1df" class="dados">
           <div style="background-color: #f9e1df" class="info-row">
             <div style="background-color: #f9e1df" class="info-column">
               <h2>Idade:</h2>
-              <p>{{  this.idade }} anos</p>
-            </div>
+              <p> {{this.idade + ' anos'}}</p></div>
             <div class="buttom-edit">
               <v-btn class="btn-editar" @click="openIdadeModal"
                 >Editar</v-btn
@@ -122,6 +123,21 @@
           </div>
         </div>
         <ModalEditIdade v-if="showIdadeModal" @close="closeIdadeModal"></ModalEditIdade>
+
+        <div class="dados">
+          <div class="info-row">
+            <div class="info-column">
+              <h2>Data de nascimento:</h2>
+              <p>{{ this.userProfileData.dataNasc}} </p>
+            </div>
+            <div class="buttom-edit">
+              <v-btn class="btn-editar" @click="openDataNascModal"
+                >Editar</v-btn
+              >
+            </div>
+          </div>
+        </div>
+        <ModaleEditDataNasc   v-if="showDataNascModal" @close="closeDataNascModal" @save="updateDataNasc"></ModaleEditDataNasc>
 
       </div>
     </div>
@@ -134,12 +150,15 @@
 import { auth } from "../config/index";
 import ModalEditarEmail from "../components/ModalEditarEmail.vue";
 import ModalEditSenha from "../components/ModalEditSenha.vue";
-import { collection, getDocs,  doc , updateDoc } from "firebase/firestore";
+import { collection, getDocs,  doc , updateDoc, getDoc} from "firebase/firestore";
 import { db } from "../config/index";
 import ModalEditNome from "../components/ModalEditNome.vue";
 import ModalEditUser from "../components/ModalEditUser.vue";
 import ModalEditIdade from "../components/ModalEditIdade.vue";
 import ModalEditTelefone from "../components/ModalEditTelefone.vue";
+import ModaleEditDataNasc from "../components/ModaleEditDataNasc.vue";
+import ModalEditImage from "../components/ModalEditImage.vue";
+
 
 export default {
   components: {
@@ -149,36 +168,89 @@ export default {
     ModalEditUser,
     ModalEditTelefone,
     ModalEditIdade,
+    ModaleEditDataNasc ,
+    ModalEditImage,
   },
   data() {
     return {
       users: [],
       user:{},
       userUser: localStorage.getItem("userlocal") ,
-   
+      showDataNascModal: false,
       editedEmail: "",
       showEmailModal: false,
       showNomeModal: false,
       newEmail: "",
+      showImageProfileModal: false,
       showPasswordModal: false,
       showIdadeModal: false,
       showTelefoneModal: false,
       userProfileData: '',
       showUserModal: false,
+      idade: 0,
       profileUndefined: "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png",
-      idade: localStorage.getItem("idade"),
+    
       
     };
   },
 
    
   methods: {
+
+    async updateProfile() {
+    try {
+      const usersCollection = collection(db, "users");
+      const querySnapshot = await getDocs(usersCollection);
+
+      const currentUserEmail = auth.currentUser.email;
+      const userDoc = querySnapshot.docs.find((doc) => doc.data().email === currentUserEmail);
+
+      if (userDoc) {
+        this.userProfileData = userDoc.data();
+
+        // Calcula a idade e atualiza a propriedade 'idade'
+        this.idade = this.calculateAgeFromBirthdate(this.userProfileData.dataNasc);
+
+        console.log("Dados do perfil após a atualização:", this.userProfileData);
+        console.log("Nome no console:", this.userProfileData && this.userProfileData.nome || 'Nome não disponível');
+
+      } else {
+        console.log("Usuário não encontrado na coleção 'users'.");
+      }
+    } catch (error) {
+      console.error("Erro ao obter dados da coleção 'users':", error);
+    }
+  },
+
+
+profileImageUser() {
+  if (this.userProfileData && this.userProfileData.profileImage) {
+    return this.userProfileData.profileImage;
+  } else {
+    return "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
+  }
+},
+
+openImageProfileModal() {
+      this.showImageProfileModal = true;
+    },
+    closeImageProfileModal() {
+      this.showImageProfileModal = false;
+    },
+
     openEmailModal() {
       this.showEmailModal = true;
     },
     closeEmailModal() {
       this.showEmailModal = false;
     },
+    openDataNascModal() {
+      this.showDataNascModal = true;
+    },
+    closeDataNascModal() {
+      this.showDataNascModal = false;
+    },
+
 
     updateEmail(newEmail) {
       this.user.email = newEmail;
@@ -195,7 +267,14 @@ export default {
       alert("Conta Exluida com sucesso!")
     },
     openPasswordModal() {
-    this.showPasswordModal = true;
+  
+    if (auth.currentUser && auth.currentUser.providerData.some(provider => provider.providerId === 'password')) {
+    
+      this.showPasswordModal = true;
+    } else {
+   
+      alert("Não é possível alterar a senha. Conta cadastrada com conta do Google.");
+    }
   },
   closePasswordModal() {
     this.showPasswordModal = false;
@@ -220,34 +299,41 @@ export default {
       this.showIdadeModal = false;
     },
 
-  async updateProfile() {
-  try {
-    const usersCollection = collection(db, "users");
-    const querySnapshot = await getDocs(usersCollection);
 
-    const currentUserEmail = auth.currentUser.email;
-    const userDoc = querySnapshot.docs.find((doc) => doc.data().email === currentUserEmail);
 
-    if (userDoc) {
-      this.userProfileData = userDoc.data();
-      console.log("Dados do perfil após a atualização:", this.userProfileData);
-      console.log("nome no console:", this.userProfileData && this.userProfileData.nome || 'Nome não disponível');
+    
+    async updateImageProfile({ newImageProfile }) {
+      try {
+        console.log("Novo perfil de imagem:", newImageProfile);        if (newImageProfile !== undefined) {
+          const usersCollection = collection(db, "users");
+          const currentUserEmail = auth.currentUser.email;
+          const userDocRef = doc(usersCollection, currentUserEmail);
 
-    } else {
-      console.log("Usuário não encontrado na coleção 'users'.");
-    }
-  } catch (error) {
-    console.error("Erro ao obter dados da coleção 'users':", error);
-  }
-},
+          const userDoc = await getDoc(userDocRef);
 
-profileImageUser() {
-  if (this.userProfileData && this.userProfileData.profileImage) {
-    return this.userProfileData.profileImage;
-  } else {
-    return "https://static.vecteezy.com/system/resources/previews/019/879/186/non_2x/user-icon-on-transparent-background-free-png.png";
-  }
-},
+          if (userDoc.exists()) {
+            const updateData = {
+              profileImage: newImageProfile,
+            };
+
+            await updateDoc(userDocRef, updateData);
+
+const updatedUser = { ...userDoc.data(), ...updateData };
+console.log("Usuário atualizado no Firestore:", updatedUser);
+
+this.userProfileData = updatedUser;
+
+          } else {
+            console.error("Documento do usuário não encontrado no Firestore:", currentUserEmail);
+          }
+        } else {
+          console.error("Imagem de edição indefinida. Não foi possível atualizar no Firestore.");
+        }
+      } catch (error) {
+        console.error("Erro ao editar imagem de perfil no Firestore:", error);
+      }
+    },
+
 
 
 async updateNameInFirestore(newName) {
@@ -272,6 +358,11 @@ async updateNameInFirestore(newName) {
 async updateName(newName) {
   try {
     if (auth.currentUser) {
+      if (!newName || newName.trim() === "") {
+        alert("Nome não pode ser nulo ou vazio.");
+        return;
+      }
+
       await this.updateNameInFirestore(newName);
       this.showNomeModal = false;
     } else {
@@ -280,13 +371,221 @@ async updateName(newName) {
   } catch (error) {
     console.error("Erro ao atualizar nome no Firestore:", error);
   }
+},
+
+async updateUserInFirestore(newUser) {
+  try {
+    if (newUser !== undefined) { 
+      const usersCollection = collection(db, "users");
+      const currentUserEmail = auth.currentUser.email;
+      const userDocRef = doc(usersCollection, currentUserEmail);
+
+      await updateDoc(userDocRef, {
+        user: newUser,
+      });
+
+      this.userProfileData.user = newUser;
+
+      console.log("Usuário atualizado no Firestore!");
+    } else {
+      console.error("Novo usuário é undefined. Não foi possível atualizar no Firestore.");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar usuário no Firestore:", error);
+  }
 }
+,
+
+async updateUser(newUser) {
+  try {
+    if (auth.currentUser) {
+      if (!newUser || newUser.trim() === "") {
+        alert("Usuário não pode ser nulo ou vazio.");
+        return;
+      }
+
+      await this.updateUserInFirestore(newUser);
+      this.showUserModal = false;
+    } else {
+      console.error("Usuário não autenticado. Não é possível atualizar o usuário.");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar usuário no Firestore:", error);
+  }
+},
+
+
+async updatePhoneInFirestore(newPhone) {
+  try {
+    const usersCollection = collection(db, "users");
+    const currentUserEmail = auth.currentUser.email;
+    const userDocRef = doc(usersCollection, currentUserEmail);
+
+    await updateDoc(userDocRef, {
+      telefone: newPhone,
+    });
+
+    this.userProfileData.telefone= newPhone;
+
+    console.log("telefone atualizado no Firestore!");
+  } catch (error) {
+    console.error("Erro ao atualizar telefone no Firestore:", error);
+  }
+},
+
+
+
+
+async updatePhone(newPhone) {
+  try {
+    if (auth.currentUser) {
+      if (!newPhone || newPhone.trim() === "") {
+        alert("Número de telefone não pode ser nulo ou vazio.");
+        return;
+      }
+
+      const numeroLimpo = newPhone.replace(/\D/g, "");
+
+      const regex = /^\d{2}9\d{8}$/;
+      if (!regex.test(numeroLimpo)) {
+        alert("Número de telefone inválido. Deve seguir o padrão: DD9XXXXXXXX");
+        return;
+      }
+
+      await this.updatePhoneInFirestore(newPhone);
+      this.showTelefoneModal = false;
+    } else {
+      console.error("Usuário não autenticado. Não é possível atualizar o telefone.");
+    }
+  } catch (error) {
+    console.error("Erro ao atualizar telefone no Firestore:", error);
+  }
+},
+
+
+
+async updateDataNasc(newDataNasc) {
+  try {
+    if (auth.currentUser) {
+      if (!newDataNasc || newDataNasc.trim() === "") {
+        alert("Data de nascimento não pode ser nula ou vazia.");
+        return;
+      }
+
+      await this.updateDataNascInFirestore(newDataNasc);
+      await this.updateProfile();
+
+      // Atribua o valor retornado à variável 'idade'
+      const idade = this.calculateAge(newDataNasc);
+
+      if (!idade) {
+        return;
+      }
+
+      this.idade = idade;
+
+      this.showDataNascModal = false;
+    } else {
+      console.error(
+        "Usuário não autenticado. Não é possível atualizar a Data de Nascimento."
+      );
+    }
+  } catch (error) {
+    console.error(
+      "Erro ao atualizar a Data de Nascimento no Firestore:",
+      error
+    );
+  }
+},
+
+    async updateDataNascInFirestore(newDataNasc) {
+      try {
+        if (newDataNasc !== undefined) {
+          const usersCollection = collection(db, "users");
+          const currentUserEmail = auth.currentUser.email;
+          const userDocRef = doc(usersCollection, currentUserEmail);
+
+          await updateDoc(userDocRef, {
+            dataNasc: newDataNasc,
+          });
+
+          this.userProfileData.dataNasc = newDataNasc;
+
+          console.log("Data de Nascimento atualizada no Firestore!");
+        } else {
+          console.error(
+            "Nova Data de Nascimento é undefined. Não foi possível atualizar no Firestore."
+          );
+        }
+      } catch (error) {
+        console.error(
+          "Erro ao atualizar a Data de Nascimento no Firestore:",
+          error
+        );
+      } finally {
+    this.calculateAge(newDataNasc);
+  }
+    },
+
+    calculateAge(dataNasc) {
+  const dataNascimento = new Date(dataNasc);
+  const dataAtual = new Date();
+
+  const diferencaAnos = dataAtual.getFullYear() - dataNascimento.getFullYear();
+
+  if (diferencaAnos < 14) {
+    alert("Usuários com menos de 14 anos não são permitidos.");
+    return null;
+  }
+
+  if (
+    diferencaAnos === 14 &&
+    dataNascimento.getMonth() > dataAtual.getMonth()
+  ) {
+    alert("Usuários com menos de 14 anos não são permitidos.");
+    return null;
+  }
+
+  if (
+    diferencaAnos === 14 &&
+    dataNascimento.getMonth() === dataAtual.getMonth() &&
+    dataNascimento.getDate() > dataAtual.getDate()
+  ) {
+    alert("Usuários com menos de 14 anos não são permitidos.");
+    return null;
+  }
+
+  return diferencaAnos;
+},
+calculateAgeFromBirthdate(dataNasc) {
+    if (!dataNasc) {
+      return "**"; 
+    }
+
+    const dataNascObj = new Date(dataNasc);
+    const dataAtual = new Date();
+
+    const idade = dataAtual.getFullYear() - dataNascObj.getFullYear();
+    const diffMes = dataAtual.getMonth() - dataNascObj.getMonth();
+
+    if (diffMes < 0 || (diffMes === 0 && dataAtual.getDate() < dataNascObj.getDate())) {
+      return idade - 1;
+    }
+
+    return idade;
   },
+
+
+
+},
  mounted() {
   this.updateProfile();
+  this.calculateAge(this.userProfileData.dataNasc);
+
+
 }
 
-};
+  };
 </script>
 
 

@@ -5,6 +5,8 @@
         <input v-model="newPhone" type="text" placeholder="Novo Telefone" />
         <div class="modal-buttons">
           <v-btn @click="closeModal">Cancelar</v-btn>
+          <v-btn @click="savePhone">Salvar</v-btn>
+
         </div>
       </div>
     </div>
@@ -21,6 +23,9 @@
       closeModal() {
         this.$emit("close", this.newPhone);
       },
+      savePhone() {
+  this.$emit("save", this.newPhone);
+},
     },
   };
   </script>
